@@ -57,16 +57,52 @@ namespace CampaignStatsTracker.Database
                     return null;
                 }
 
-                var stats = await reader.ReadSingleOrDefaultAsync<DatabaseStatsDto>();
+                var characters = await reader.ReadAsync<Character>();
+                campaign.Characters = characters;
 
+                var stats = await reader.ReadSingleOrDefaultAsync<DatabaseStatsDto>();
                 campaign.Stats = stats.ToCombinedStats();
             }
 
             return campaign;
         }
 
+        public async Task<IEnumerable<EntityWithStats>> GetStatsAsync(IEnumerable<Guid> publicIds) =>
+            await GetStatsAsync(publicIds.Select(p => new Entity() { PublicId = p }));
+
+        public async Task<IEnumerable<EntityWithStats>> GetStatsAsync(IEnumerable<Entity> entities)
+        {
+            var entityTable = new DataTable();
+            entityTable.Columns.Add("PublicId", typeof(Guid));
+
+            if (entities != null)
+            {
+                foreach (var entity in entities)
+                {
+                    var entityRow = entityTable.NewRow();
+                    entityRow["PublicId"] = entity.PublicId;
+                    entityTable.Rows.Add(entityRow);
+                }
+            }
+
+            using (SqlConnection connection = new SqlConnection(_connectionBuilder.ConnectionString))
+            {
+                var reader = await connection.QueryMultipleAsync(
+                    "[Rolls].[Sto_GetRollStatsForEntities]",
+                    new { Entities = entityTable },
+                    commandType: CommandType.StoredProcedure
+                );
+
+                var stats = await reader.ReadAsync<DatabaseStatsDto>();
+
+                return stats.Select(s => s.ToEntityWithStats());
+            }
+        }
+
         public async Task InsertRoll(RollPost roll)
         {
+            var isAttackRoll = string.Equals(roll.RollType, "attack", StringComparison.CurrentCultureIgnoreCase);
+
             var skillRollTable = new DataTable();
             skillRollTable.Columns.Add("NumberOfSides", typeof(int));
             skillRollTable.Columns.Add("Value", typeof(int));
@@ -80,10 +116,13 @@ namespace CampaignStatsTracker.Database
             skillModifierTable.Columns.Add("Comment", typeof(string));
             skillModifierTable.Columns.Add("Value", typeof(int));
 
-            var skillModifierRow = skillModifierTable.NewRow();
-            skillModifierRow["Comment"] = "";
-            skillModifierRow["Value"] = roll.RollModifer;
-            skillModifierTable.Rows.Add(skillModifierRow);
+            if (roll.RollModifer != 0)
+            {
+                var skillModifierRow = skillModifierTable.NewRow();
+                skillModifierRow["Comment"] = "";
+                skillModifierRow["Value"] = roll.RollModifer;
+                skillModifierTable.Rows.Add(skillModifierRow);
+            }
 
             var commentTable = new DataTable();
             commentTable.Columns.Add("Comment", typeof(string));
@@ -111,20 +150,96 @@ namespace CampaignStatsTracker.Database
                 await connection.OpenAsync();
 
                 var command = connection.CreateCommand();
-                command.CommandText = "[Rolls].[Sto_InsertSkillRoll]";
                 command.CommandType = CommandType.StoredProcedure;
 
-                var skillRollParameter = command.CreateParameter();
-                skillRollParameter.TypeName = "[Rolls].[DieRollType]";
-                skillRollParameter.Value = skillRollTable;
-                skillRollParameter.ParameterName = "@Dice";
-                command.Parameters.Add(skillRollParameter);
+                if (isAttackRoll)
+                {
+                    command.CommandText = "[Rolls].[Sto_InsertAttackRoll]";
 
-                var skillModifierParameter = command.CreateParameter();
-                skillModifierParameter.TypeName = "[Rolls].[RollModifierType]";
-                skillModifierParameter.Value = skillModifierTable;
-                skillModifierParameter.ParameterName = "@Modifiers";
-                command.Parameters.Add(skillModifierParameter);
+                    var damageRollTable = new DataTable();
+                    damageRollTable.Columns.Add("NumberOfSides", typeof(int));
+                    damageRollTable.Columns.Add("Value", typeof(int));
+
+                    if (roll.RollSucceeded)
+                    {
+                        foreach (var dr in roll.DamageRolls)
+                        {
+                            var damageRollRow = damageRollTable.NewRow();
+                            damageRollRow["NumberOfSides"] = dr.NumberOfSides;
+                            damageRollRow["Value"] = dr.Result;
+                            damageRollTable.Rows.Add(damageRollRow);
+                        }
+                    }
+
+                    var damageModifierTable = new DataTable();
+                    damageModifierTable.Columns.Add("Comment", typeof(string));
+                    damageModifierTable.Columns.Add("Value", typeof(int));
+
+                    // var damageModifierRow = damageModifierTable.NewRow();
+                    // damageModifierRow["Comment"] = "";
+                    // damageModifierRow["Value"] = 0;
+                    // damageModifierTable.Rows.Add(damageModifierRow);
+
+                    var skillRollParameter = command.CreateParameter();
+                    skillRollParameter.TypeName = "[Rolls].[DieRollType]";
+                    skillRollParameter.Value = skillRollTable;
+                    skillRollParameter.ParameterName = "@HitDice";
+                    command.Parameters.Add(skillRollParameter);
+
+                    var skillModifierParameter = command.CreateParameter();
+                    skillModifierParameter.TypeName = "[Rolls].[RollModifierType]";
+                    skillModifierParameter.Value = skillModifierTable;
+                    skillModifierParameter.ParameterName = "@HitModifiers";
+                    command.Parameters.Add(skillModifierParameter);
+
+                    var damageRollParameter = command.CreateParameter();
+                    damageRollParameter.TypeName = "[Rolls].[DieRollType]";
+                    damageRollParameter.Value = damageRollTable;
+                    damageRollParameter.ParameterName = "@DamageDice";
+                    command.Parameters.Add(damageRollParameter);
+
+                    var damageModifierParameter = command.CreateParameter();
+                    damageModifierParameter.TypeName = "[Rolls].[RollModifierType]";
+                    damageModifierParameter.Value = damageModifierTable;
+                    damageModifierParameter.ParameterName = "@DamageModifiers";
+                    command.Parameters.Add(damageModifierParameter);
+
+                    var damageTypeParameter = command.CreateParameter();
+                    damageTypeParameter.Value = "";
+                    damageTypeParameter.ParameterName = "@DamageType";
+                    command.Parameters.Add(damageTypeParameter);
+
+                    var damageSourceParameter = command.CreateParameter();
+                    damageSourceParameter.Value = "";
+                    damageSourceParameter.ParameterName = "@DamageSource";
+                    command.Parameters.Add(damageSourceParameter);
+                }
+                else
+                {
+                    command.CommandText = "[Rolls].[Sto_InsertSkillRoll]";
+
+                    var skillRollParameter = command.CreateParameter();
+                    skillRollParameter.TypeName = "[Rolls].[DieRollType]";
+                    skillRollParameter.Value = skillRollTable;
+                    skillRollParameter.ParameterName = "@Dice";
+                    command.Parameters.Add(skillRollParameter);
+
+                    var skillModifierParameter = command.CreateParameter();
+                    skillModifierParameter.TypeName = "[Rolls].[RollModifierType]";
+                    skillModifierParameter.Value = skillModifierTable;
+                    skillModifierParameter.ParameterName = "@Modifiers";
+                    command.Parameters.Add(skillModifierParameter);
+                }
+
+                var successParameter = command.CreateParameter();
+                successParameter.Value = roll.RollSucceeded;
+                successParameter.ParameterName = "@Success";
+                command.Parameters.Add(successParameter);
+
+                var skillTypeParameter = command.CreateParameter();
+                skillTypeParameter.Value = roll.SkillType;
+                skillTypeParameter.ParameterName = "@SkillType";
+                command.Parameters.Add(skillTypeParameter);
 
                 var commentParameter = command.CreateParameter();
                 commentParameter.TypeName = "[Rolls].[RollCommentType]";
@@ -137,18 +252,6 @@ namespace CampaignStatsTracker.Database
                 entityParameter.Value = entityTable;
                 entityParameter.ParameterName = "@AssociatedEntities";
                 command.Parameters.Add(entityParameter);
-
-                var successParameter = command.CreateParameter();
-                // successParameter.TypeName = "BIT";
-                successParameter.Value = roll.RollSucceeded;
-                successParameter.ParameterName = "@Success";
-                command.Parameters.Add(successParameter);
-
-                var skillTypeParameter = command.CreateParameter();
-                // skillTypeParameter.TypeName = "VARCHAR(50)";
-                skillTypeParameter.Value = roll.SkillType;
-                skillTypeParameter.ParameterName = "@SkillType";
-                command.Parameters.Add(skillTypeParameter);
 
                 var reader = await command.ExecuteReaderAsync();
             }

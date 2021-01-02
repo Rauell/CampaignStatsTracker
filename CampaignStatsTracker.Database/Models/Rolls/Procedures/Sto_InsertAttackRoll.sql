@@ -1,10 +1,12 @@
-CREATE PROCEDURE [Rolls].[Sto_InsertDamageRoll]
+CREATE PROCEDURE [Rolls].[Sto_InsertAttackRoll]
 	@HitDice						[Rolls].[DieRollType] READONLY,
 	@HitModifiers				[Rolls].[RollModifierType] READONLY,
 	@DamageDice					[Rolls].[DieRollType] READONLY,
 	@DamageModifiers		[Rolls].[RollModifierType] READONLY,
+	@SkillType					VARCHAR(50),
 	@DamageType					VARCHAR(50),
 	@DamageSource				VARCHAR(50),
+	@Success						BIT,
 	@Comments 					[Rolls].[RollCommentType] READONLY,
 	@AssociatedEntities	[Entities].[EntitiesType] READONLY
 AS
@@ -12,24 +14,26 @@ BEGIN
 	DECLARE @NumberOfHitDice INT;
 	SELECT @NumberOfHitDice = COUNT(1) FROM @HitDice;
 
-	IF @NumberOfHitDice <> 1
-	BEGIN
-		THROW 51000, 'Attack Hit Rolls only accept a single die', 1;
-	END
-
 	DECLARE @HitRollId INT;
-	EXEC @HitRollId = [Rolls].[Sto_InsertRoll] @AssociatedEntities;
-	EXEC [Rolls].[Sto_InsertIndividualRolls] @HitRollId, @HitDice;
-	EXEC [Rolls].[Sto_InsertRollModifiers] @HitRollId, @HitModifiers;
-	EXEC [Rolls].[Sto_InsertRollComments] @HitRollId, @Comments;
+	EXEC @HitRollId = [Rolls].[Sto_InsertSkillRoll]
+		@HitDice,
+		@HitModifiers,
+		@SkillType,
+		@Success,
+		@Comments,
+		@AssociatedEntities
+	;
+	DECLARE @DamageRollId INT = NULL;
+	DECLARE @DamageSourceId INT = NULL;
 
-	DECLARE @DamageRollId INT;
-	EXEC @DamageRollId = [Rolls].[Sto_InsertRoll] @AssociatedEntities;
-	EXEC [Rolls].[Sto_InsertIndividualRolls] @DamageRollId, @DamageDice;
-	EXEC [Rolls].[Sto_InsertRollModifiers] @DamageRollId, @DamageModifiers;
+	IF @Success = 1
+	BEGIN
+		EXEC @DamageRollId = [Rolls].[Sto_InsertRoll] @AssociatedEntities;
+		EXEC [Rolls].[Sto_InsertIndividualRolls] @DamageRollId, @DamageDice;
+		EXEC [Rolls].[Sto_InsertRollModifiers] @DamageRollId, @DamageModifiers;
 
-	DECLARE @DamageSourceId INT;
-	EXEC @DamageSourceId = [Rolls].[Sto_InsertDamageType] @DamageType, @DamageSource;
+		EXEC @DamageSourceId = [Rolls].[Sto_InsertDamageSource] @DamageSource, @DamageType;
+	END
 
 	INSERT INTO [Rolls].[AttackRolls]([HitRollId], [DamageRollId], [DamageSourceId])
 	VALUES(@HitRollId, @DamageRollId, @DamageSourceId)

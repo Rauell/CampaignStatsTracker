@@ -46,7 +46,7 @@ DECLARE @ctirrCampaignId INT;
 EXEC @ctirrCampaignId = [Games].[Sto_InsertCampaign] 'Ctrirr';
 
 DECLARE @hobbitId INT, @hobbitPublicId UNIQUEIDENTIFIER;
-EXEC @hobbitId = [Games].[Sto_InsertCharacter] 'Bobby', @equigleyUserId, @ctirrCampaignId;
+EXEC @hobbitId = [Games].[Sto_InsertCharacter] 'Bobbit Brandytook', @equigleyUserId, @ctirrCampaignId;
 SET @hobbitPublicId = [Games].[Sc_GetCharacterPublicId](@hobbitId);
 
 DECLARE @genieId INT, @geniePublicId UNIQUEIDENTIFIER;

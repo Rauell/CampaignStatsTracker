@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <PropertyGroup>
+        <!-- <TargetDatabaseName>DnDTrackerTestDatabase</TargetDatabaseName> -->
         <TargetServerName>localhost\SQLEXPRESS</TargetServerName>
         <CreateNewDatabase>True</CreateNewDatabase>
         <!-- Refer to https://github.com/rr-wfm/MSBuild.Sdk.SqlProj#publishing-support for supported publishing options -->

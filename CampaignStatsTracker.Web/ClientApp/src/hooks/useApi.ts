@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
 
-const useApi = (
-  onResponse: (response: Response) => void,
+type ResponseHandler = (response: Response) => void;
+
+interface IBaseProps {
   url: RequestInfo,
-  opts?: RequestInit
-) => {
+  opts?: RequestInit,
+}
+
+interface IApiProps extends IBaseProps {
+  onResponse?: ResponseHandler,
+}
+
+const useApi = (props: IApiProps) => {
+  const { onResponse, url, opts } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -14,7 +22,7 @@ const useApi = (
     fetch(url, opts)
       .then(response => {
         setIsLoading(false);
-        onResponse(response);
+        onResponse && onResponse(response);
       })
       .catch(error => {
         setIsLoading(false);
@@ -25,14 +33,16 @@ const useApi = (
   return { isLoading, error };
 };
 
-export const useApiJsonResponse = (
-  useData: (data: any) => void,
-  url: RequestInfo,
-  opts?: RequestInit
-) => useApi(
-  response => response.json().then(useData),
-  url,
-  opts
-);
+interface IJsonProps extends IBaseProps {
+  onSuccess?: (data: any) => void,
+}
+
+export const useApiJsonResponse = (props: IJsonProps) => {
+  const { onSuccess, ...apiProps } = props;
+  return useApi({
+    onResponse: (response: Response) => response.json().then(onSuccess),
+    ...apiProps
+  });
+}
 
 export default useApi;

@@ -32,7 +32,6 @@ CREATE TABLE [Rolls].[AttackRolls]
 		CONSTRAINT [FK_Rolls_AttackRolls_Rolls_DamageSources]
 			FOREIGN KEY ([DamageSourceId])
 			REFERENCES [Rolls].[DamageSources]([DamageSourceId])
-		NOT NULL
 );
 GO
 

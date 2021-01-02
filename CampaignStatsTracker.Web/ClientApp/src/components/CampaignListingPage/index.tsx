@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { generatePath } from 'react-router';
-import { Container, ListGroup, ListGroupItem } from 'reactstrap';
+import { Container, ListGroup, ListGroupItem, Row, Col, Alert } from 'reactstrap';
 import LoadingSpinner from '../LoadingSpinner';
-import useApi from '../../hooks/useApi';
+import { useApiJsonResponse } from '../../hooks/useApi';
 import { ICampaign } from '../../types';
 import Routes from '../../Routes';
 
-const CampaignListingPage = () => {
+interface IProps {
+  errorMessage?: string
+}
+
+const CampaignListingPage = (props: IProps) => {
+  const { errorMessage } = props;
   const [campaigns, setCampaigns] = useState<ICampaign[]>([]);
-  const temp = (data: ICampaign[]) => {
-    console.log(data);
-    setCampaigns(data);
-  }
-  const { isLoading } = useApi(
-    response => response.json().then(temp),
-    "/api/campaign/list"
-  );
+  const { isLoading } = useApiJsonResponse({ onSuccess: setCampaigns, url: '/api/campaign/list' });
 
   const campaignList = campaigns.map(c => (
     <ListGroupItem
@@ -31,13 +29,28 @@ const CampaignListingPage = () => {
 
   return (
     <Container>
-      <h1>Campaigns</h1>
-      <LoadingSpinner isLoading={isLoading}>
-        <ListGroup>
-          {campaignList}
-        </ListGroup>
-      </LoadingSpinner>
-    </Container>
+      <Row>
+        <Col>
+          <h1>Campaigns</h1>
+        </Col>
+      </Row>
+      {errorMessage &&
+        <Row>
+          <Col>
+            <Alert color="warning">{errorMessage}  </Alert>
+          </Col>
+        </Row>
+      }
+      <Row>
+        <Col>
+          <LoadingSpinner isLoading={isLoading}>
+            <ListGroup>
+              {campaignList}
+            </ListGroup>
+          </LoadingSpinner>
+        </Col>
+      </Row>
+    </Container >
   );
 }
 

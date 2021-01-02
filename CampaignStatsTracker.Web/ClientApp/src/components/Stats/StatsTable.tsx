@@ -14,8 +14,6 @@ const StatsTable = (props: IProps) => {
 
   if (!loopStats.length) return null;
 
-  console.log(loopStats);
-
   return (
     <Table striped hover bordered>
       <thead>

@@ -4,8 +4,8 @@ using CampaignStatsTracker.Models.Views.Stats;
 
 namespace CampaignStatsTracker.Models.Views.Entities
 {
-    public class Character : EntityWithStats
+    public class EntityWithStats : Entity
     {
-        public string Name { get; set; }
+        public CombinedStats Stats { get; set; }
     }
 }

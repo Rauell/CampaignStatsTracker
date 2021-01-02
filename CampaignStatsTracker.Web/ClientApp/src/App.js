@@ -16,7 +16,6 @@ export default class App extends Component {
   static displayName = App.name;
 
   render() {
-    console.log(Routes.campaign);
     return (
       <Layout>
         {/* <Fade> */}

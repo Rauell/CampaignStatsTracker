@@ -4,27 +4,31 @@ AS
 BEGIN
 	CREATE TABLE #Stats
 	(
-		[PublicId]							UNIQUEIDENTIFIER,
-		[D20SkillCount]					INT,
-		[D20SkillCritCount]			INT,
-		[D20SkillSuccessCount]	INT,
+		[PublicId]									UNIQUEIDENTIFIER,
+		[D20SkillCount]							INT,
+		[D20SkillCritSuccessCount]	INT,
+		[D20SkillCritFailureCount]	INT,
+		[D20SkillSuccessCount]			INT,
 		-- [D20SkillMode]					INT,
-		[D20SkillAverage]				FLOAT,
+		[D20SkillAverage]						FLOAT,
 		-- [D20SkillTypeMode]			VARCHAR(50),
-		[D20AttackCount]				INT,
-		[D20AttackCritCount]		INT,
-		[D20AttackSuccessCount]	INT,
+		[D20AttackCount]						INT,
+		[D20AttackCritSuccessCount]	INT,
+		[D20AttackCritFailureCount]	INT,
+		[D20AttackSuccessCount]			INT,
 		-- [D20AttackMode]					INT,
-		[D20AttackAverage]			FLOAT,
+		[D20AttackAverage]					FLOAT,
 		-- [DamageSourceMode]			VARCHAR(50)
-		[DamageAverage]					FLOAT
+		[DamageAverage]							FLOAT
 	);
 	CREATE TABLE #Rolls (
-		[RollId] INT PRIMARY KEY,
+		[RollId] INT,
 		[PublicId] UNIQUEIDENTIFIER NOT NULL,
 		[RawValue] INT NOT NULL,
 		[Value] INT NOT NULL,
-		[IsSingleD20] BIT NOT NULL
+		[IsSingleD20] BIT NOT NULL,
+
+		CONSTRAINT [RollId_PublicId] UNIQUE ([RollId], [PublicId])
 	);
 
 	INSERT INTO #Rolls
@@ -65,7 +69,8 @@ BEGIN
 	UPDATE #Stats
 	SET
 		[D20SkillCount] = ISNULL(NS.[D20SkillCount], 0),
-		[D20SkillCritCount] = ISNULL(NS.[D20SkillCritCount], 0),
+		[D20SkillCritSuccessCount] = ISNULL(NS.[D20SkillCritSuccessCount], 0),
+		[D20SkillCritFailureCount] = ISNULL(NS.[D20SkillCritFailureCount], 0),
 		[D20SkillSuccessCount] = ISNULL(NS.[D20SkillSuccessCount], 0),
 		[D20SkillAverage] = NS.[D20SkillAverage]
 	FROM #Stats S
@@ -73,7 +78,8 @@ BEGIN
 			SELECT
 				R.[PublicId],
 				COUNT(SR.[SkillRollId]) AS [D20SkillCount],
-				COUNT(CASE WHEN R.[RawValue] = 20 THEN 1 ELSE NULL END) AS [D20SkillCritCount],
+				COUNT(CASE WHEN R.[RawValue] = 20 THEN 1 ELSE NULL END) AS [D20SkillCritSuccessCount],
+				COUNT(CASE WHEN R.[RawValue] = 1 THEN 1 ELSE NULL END) AS [D20SkillCritFailureCount],
 				SUM(CAST(SR.[Success] AS INT)) AS [D20SkillSuccessCount],
 				AVG(R.[Value]) AS [D20SkillAverage]
 			FROM #Rolls R
@@ -90,7 +96,8 @@ BEGIN
 	UPDATE #Stats
 	SET
 		[D20AttackCount] = ISNULL(NS.[D20AttackCount], 0),
-		[D20AttackCritCount] = ISNULL(NS.[D20AttackCritCount], 0),
+		[D20AttackCritSuccessCount] = ISNULL(NS.[D20AttackCritSuccessCount], 0),
+		[D20AttackCritFailureCount] = ISNULL(NS.[D20AttackCritFailureCount], 0),
 		[D20AttackSuccessCount] = ISNULL(NS.[D20AttackSuccessCount], 0),
 		[D20AttackAverage] = NS.[D20AttackAverage],
 		[DamageAverage] = NS.[DamageAverage]
@@ -99,7 +106,8 @@ BEGIN
 			SELECT
 				R.[PublicId],
 				COUNT(AR.[AttackRollId]) AS [D20AttackCount],
-				COUNT(CASE WHEN R.[RawValue] = 20 THEN 1 ELSE NULL END) AS [D20AttackCritCount] ,
+				COUNT(CASE WHEN R.[RawValue] = 20 THEN 1 ELSE NULL END) AS [D20AttackCritSuccessCount],
+				COUNT(CASE WHEN R.[RawValue] = 1 THEN 1 ELSE NULL END) AS [D20AttackCritFailureCount] ,
 				COUNT(DR.[RollId]) AS [D20AttackSuccessCount],
 				AVG(R.[Value]) AS [D20AttackAverage],
 				AVG(DR.[Value]) AS [DamageAverage]

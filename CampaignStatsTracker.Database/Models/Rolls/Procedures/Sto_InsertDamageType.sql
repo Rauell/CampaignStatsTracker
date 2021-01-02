@@ -15,8 +15,8 @@ BEGIN
 
 	IF @DamageTypeId IS NULL
 	BEGIN
-		INSERT INTO [Rolls].[DamageTypes]([Name], [DamageTypeId])
-		VALUES (@Name, @DamageTypeId)
+		INSERT INTO [Rolls].[DamageTypes]([Name])
+		VALUES (@Name)
 		;
 
 		SET @DamageTypeId = SCOPE_IDENTITY();

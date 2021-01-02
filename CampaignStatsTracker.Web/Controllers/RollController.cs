@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CampaignStatsTracker.Database;
 using CampaignStatsTracker.Models.Views;
+using CampaignStatsTracker.Models.Views.Entities;
 
 namespace CampaignStatsTracker.Web.Controllers
 {
@@ -14,11 +15,13 @@ namespace CampaignStatsTracker.Web.Controllers
     public class RollController : ControllerBase
     {
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] RollPost roll)
+        public async Task<ActionResult<IEnumerable<EntityWithStats>>> Post([FromBody] RollPost roll)
         {
             var db = new CampaignDatabase();
             await db.InsertRoll(roll);
-            return Ok();
+
+            var stats = await db.GetStatsAsync(roll.Entities.Select(e => e.PublicId));
+            return stats.ToList();
         }
     }
 }

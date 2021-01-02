@@ -2,7 +2,7 @@ import { Guid } from "guid-typescript";
 
 /* Begin Section Common */
 export interface IPublicEntity {
-  publicId: Guid;
+  publicId: string;
 }
 
 interface INamedPublicEntity extends IPublicEntity {
@@ -55,21 +55,22 @@ export interface ICombinedStats {
   damage: IStatDamage;
 }
 
-export interface IPublicStats extends INamedPublicEntity {
+export interface IPublicEntityStats extends IPublicEntity {
   stats: ICombinedStats;
 }
+
 /* End Section Stats */
 
 /* Begin Section Users */
 export interface IUser extends INamedPublicEntity { }
 
-export interface IUserStats extends IUser, IPublicStats { }
+export interface IUserStats extends IUser, IPublicEntityStats { }
 /* End Section Users */
 
 /* Begin Section Campaigns */
 export interface ICampaign extends INamedPublicEntity { }
 
-export interface ICampaignStats extends ICampaign, IPublicStats {
-  users: IUserStats[];
+export interface ICampaignStats extends ICampaign, IPublicEntityStats {
+  characters: IUserStats[];
 }
 /* End Section Campaigns */
