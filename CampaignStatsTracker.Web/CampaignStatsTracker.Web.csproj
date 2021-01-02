@@ -10,7 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.8" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CampaignStatsTracker.Models\CampaignStatsTracker.Models.csproj" />
+    <!-- <ProjectReference Include="..\CampaignStatsTracker.Database\CampaignStatsTracker.Database.csproj" /> -->
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

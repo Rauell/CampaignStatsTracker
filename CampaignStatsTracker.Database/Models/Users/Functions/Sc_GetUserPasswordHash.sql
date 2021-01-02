@@ -1,0 +1,11 @@
+CREATE FUNCTION [Users].[Sc_GetUserPasswordHash]
+(
+	@Password VARCHAR(250),
+	@Handle VARCHAR(50)
+)
+RETURNS BINARY(64)
+AS
+BEGIN
+	RETURN HASHBYTES('SHA2_512', CONCAT(@Handle, @Password));
+END
+GO

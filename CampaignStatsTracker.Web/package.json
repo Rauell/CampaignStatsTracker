@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "@types/react-router": "^5.1.9",
+    "@types/react-router-dom": "^5.1.7",
+    "guid-typescript": "^1.0.9"
+  }
+}
