@@ -1,6 +1,6 @@
 CREATE PROCEDURE [Rolls].[Sto_InsertAttackRoll]
-	@HitDice						[Rolls].[DieRollType] READONLY,
-	@HitModifiers				[Rolls].[RollModifierType] READONLY,
+	@Dice								[Rolls].[DieRollType] READONLY,
+	@Modifiers					[Rolls].[RollModifierType] READONLY,
 	@DamageDice					[Rolls].[DieRollType] READONLY,
 	@DamageModifiers		[Rolls].[RollModifierType] READONLY,
 	@SkillType					VARCHAR(50),
@@ -13,13 +13,13 @@ AS
 BEGIN
 	DECLARE @NumberOfHitDice INT;
 	SELECT @NumberOfHitDice = COUNT(1)
-	FROM @HitDice
+	FROM @Dice
 	;
 
 	DECLARE @HitRollId INT;
 	EXEC @HitRollId = [Rolls].[Sto_InsertSkillRoll]
-		@HitDice,
-		@HitModifiers,
+		@Dice,
+		@Modifiers,
 		@SkillType,
 		@Success,
 		@Comments,

@@ -18,9 +18,9 @@ interface IProps {
 
 const rollTypes = [
   'Skill',
-  'Attack'
+  'Attack',
+  'Initiative',
 ];
-
 
 const formColumnSizes = { xs: 6, sm: 4, md: 3 };
 
@@ -28,7 +28,6 @@ const getInputId = (id: string, formId: string) => `${formId}-${id}`;
 
 const AddRollForm = (props: IProps) => {
   const { formId = '', entities = [], onSubmitSuccess, characters } = props;
-  const isLoading = false;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rollType, setRollType] = useState(rollTypes[0]);
@@ -38,6 +37,7 @@ const AddRollForm = (props: IProps) => {
   const [rollComment, setRollComment] = useState('');
   const [rollSucceeded, setRollSucceeded] = useState(false);
   const [selectedCharacterId, setSelectedCharacterId] = useState<Guid>(Guid.createEmpty());
+  const [initiativeRank, setInitiativeRank] = useState(1);
 
   const [damageRolls, setDamageRolls] = useState<IDamageRoll[]>([{ numberOfSides: 6, result: 1 }]);
   const [damageModifier, setDamageModifier] = useState(0);
@@ -46,7 +46,6 @@ const AddRollForm = (props: IProps) => {
   const rollTypeId = getInputId(formId, 'rollType');
   const skillTypeId = getInputId(formId, 'skillType');
   const rollValueId = getInputId(formId, 'rollValue');
-  const rollNumberOfSidesId = getInputId(formId, 'numberOfSides');
   const rollCommentId = getInputId(formId, 'rollComment');
   const rollModifiersId = getInputId(formId, 'rollModifiers');
   const rollSucceededId = getInputId(formId, 'rollSucceeded');
@@ -76,6 +75,7 @@ const AddRollForm = (props: IProps) => {
             rollSucceeded,
             damageRolls,
             damageModifier,
+            initiativeRank,
             entities: entitiesToUse,
           }),
         }
@@ -105,6 +105,19 @@ const AddRollForm = (props: IProps) => {
     setDamageRolls,
     disabled: isSubmitting,
   };
+
+  let showDamage, showSuccess, showRank = false;
+
+  switch (rollType) {
+    case "Attack":
+      showDamage = rollSucceeded;
+    case "Skill":
+      showSuccess = true;
+      break;
+    case "Initiative":
+      showRank = true;
+      break;
+  }
 
   return (
     <Card>
@@ -179,21 +192,39 @@ const AddRollForm = (props: IProps) => {
             </Col>
           </Row>
           <Row>
-            <Col md={3}>
-              <FormGroup check>
-                <Label for={rollSucceededId} check>
+            {showSuccess &&
+              <Col md={3}>
+                <FormGroup check>
+                  <Label for={rollSucceededId} check>
+                    <Input
+                      type="checkbox"
+                      id={rollSucceededId}
+                      name="success"
+                      checked={rollSucceeded}
+                      onChange={_ => setRollSucceeded(!rollSucceeded)}
+                      disabled={isSubmitting}
+                    />
+                    {' Success'}
+                  </Label>
+                </FormGroup>
+              </Col>
+            }
+            {showRank &&
+              <Col md={3}>
+                <FormGroup>
+                  <Label>Rank</Label>
                   <Input
-                    type="checkbox"
-                    id={rollSucceededId}
-                    name="success"
-                    checked={rollSucceeded}
-                    onChange={_ => setRollSucceeded(!rollSucceeded)}
+                    type="number"
+                    min="1"
+                    max="99"
+                    value={initiativeRank}
+                    onChange={e => setInitiativeRank(parseInt(e.target.value))}
                     disabled={isSubmitting}
                   />
-                  {' Success'}
-                </Label>
-              </FormGroup>
-            </Col>
+
+                </FormGroup>
+              </Col>
+            }
             <Col md={9}>
               <FormGroup>
                 <Label for={rollCommentId}>Comments</Label>
@@ -209,7 +240,7 @@ const AddRollForm = (props: IProps) => {
               </FormGroup>
             </Col>
           </Row>
-          {rollType === 'Attack' && rollSucceeded && <AddDamageDice {...damageProps} />}
+          {showDamage && <AddDamageDice {...damageProps} />}
         </CardBody>
         <CardFooter>
           <Button>Submit</Button>

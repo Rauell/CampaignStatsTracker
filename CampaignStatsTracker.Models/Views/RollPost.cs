@@ -25,5 +25,6 @@ namespace CampaignStatsTracker.Models.Views
         public int RollValue { get; set; }
         public string SkillType { get; set; }
         public int DamageModifier { get; set; }
+        public int InitiativeRank { get; set; }
     }
 }
