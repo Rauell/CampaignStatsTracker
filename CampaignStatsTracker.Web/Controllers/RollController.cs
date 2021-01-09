@@ -18,7 +18,7 @@ namespace CampaignStatsTracker.Web.Controllers
         public async Task<ActionResult<IEnumerable<EntityWithStats>>> Post([FromBody] RollPost roll)
         {
             var db = new CampaignDatabase();
-            await db.InsertRoll(roll);
+            await db.InsertRollAsync(roll);
 
             var stats = await db.GetStatsAsync(roll.Entities.Select(e => e.PublicId));
             return stats.ToList();

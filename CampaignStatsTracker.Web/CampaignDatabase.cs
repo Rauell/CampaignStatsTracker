@@ -99,7 +99,7 @@ namespace CampaignStatsTracker.Database
             }
         }
 
-        public async Task InsertRoll(RollPost roll)
+        public async Task InsertRollAsync(RollPost roll)
         {
             var isAttackRoll = string.Equals(roll.RollType, "attack", StringComparison.CurrentCultureIgnoreCase);
 
@@ -113,14 +113,14 @@ namespace CampaignStatsTracker.Database
             skillRollTable.Rows.Add(skillRollRow);
 
             var skillModifierTable = new DataTable();
-            skillModifierTable.Columns.Add("Comment", typeof(string));
+            // skillModifierTable.Columns.Add("Comment", typeof(string));
             skillModifierTable.Columns.Add("Value", typeof(int));
 
-            if (roll.RollModifer != 0)
+            if (roll.RollModifier != 0)
             {
                 var skillModifierRow = skillModifierTable.NewRow();
-                skillModifierRow["Comment"] = "";
-                skillModifierRow["Value"] = roll.RollModifer;
+                // skillModifierRow["Comment"] = "";
+                skillModifierRow["Value"] = roll.RollModifier;
                 skillModifierTable.Rows.Add(skillModifierRow);
             }
 
@@ -172,7 +172,7 @@ namespace CampaignStatsTracker.Database
                     }
 
                     var damageModifierTable = new DataTable();
-                    damageModifierTable.Columns.Add("Comment", typeof(string));
+                    // damageModifierTable.Columns.Add("Comment", typeof(string));
                     damageModifierTable.Columns.Add("Value", typeof(int));
 
                     // var damageModifierRow = damageModifierTable.NewRow();

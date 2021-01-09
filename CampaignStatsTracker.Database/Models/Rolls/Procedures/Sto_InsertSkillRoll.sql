@@ -8,25 +8,26 @@ CREATE PROCEDURE [Rolls].[Sto_InsertSkillRoll]
 AS
 BEGIN
 	DECLARE @NumberOfDice INT;
-	SELECT @NumberOfDice = COUNT(1) FROM @Dice;
+	SELECT @NumberOfDice = COUNT(1)
+	FROM @Dice;
 
-	IF @NumberOfDice <> 1
-	BEGIN
-		THROW 51000, 'Skill Rolls only accept a single die', 1;
-	END
+	IF (@NumberOfDice <> 1) THROW 51000, 'Skill Rolls only accept a single die', 1;
 
 	DECLARE @RollId INT;
-	EXEC @RollId = [Rolls].[Sto_InsertRoll] @AssociatedEntities;
+	EXEC @RollId = [Rolls].[Sto_InsertRoll]
+		@Dice,
+		@Modifiers,
+		@Comments,
+		@AssociatedEntities
+	;
 
 	DECLARE @SkillTypeId SMALLINT;
 	EXEC @SkillTypeId = [Rolls].[Sto_GetSkillTypeId] @SkillType;
 
-	EXEC [Rolls].[Sto_InsertRollComments] @RollId, @Comments;
-
-	EXEC [Rolls].[Sto_InsertIndividualRolls] @RollId, @Dice;
-
-	INSERT INTO [Rolls].[SkillRolls]([RollId], [SkillTypeId], [Success])
-	VALUES (@RollId, @SkillTypeId, @Success)
+	INSERT INTO [Rolls].[SkillRolls]
+		([RollId], [SkillTypeId], [Success])
+	VALUES
+		(@RollId, @SkillTypeId, @Success)
 	;
 
 	DECLARE @SkillRollId INT = SCOPE_IDENTITY();

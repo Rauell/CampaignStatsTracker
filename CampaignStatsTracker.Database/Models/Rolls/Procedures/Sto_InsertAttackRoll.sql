@@ -12,7 +12,9 @@ CREATE PROCEDURE [Rolls].[Sto_InsertAttackRoll]
 AS
 BEGIN
 	DECLARE @NumberOfHitDice INT;
-	SELECT @NumberOfHitDice = COUNT(1) FROM @HitDice;
+	SELECT @NumberOfHitDice = COUNT(1)
+	FROM @HitDice
+	;
 
 	DECLARE @HitRollId INT;
 	EXEC @HitRollId = [Rolls].[Sto_InsertSkillRoll]
@@ -28,14 +30,19 @@ BEGIN
 
 	IF @Success = 1
 	BEGIN
-		EXEC @DamageRollId = [Rolls].[Sto_InsertRoll] @AssociatedEntities;
-		EXEC [Rolls].[Sto_InsertIndividualRolls] @DamageRollId, @DamageDice;
-		EXEC [Rolls].[Sto_InsertRollModifiers] @DamageRollId, @DamageModifiers;
+		DECLARE @DamageComments [Rolls].[RollCommentType];
+		EXEC @DamageRollId = [Rolls].[Sto_InsertRoll]
+			@DamageDice,
+			@DamageModifiers,
+			@DamageComments,
+			@AssociatedEntities
+		;
 
 		EXEC @DamageSourceId = [Rolls].[Sto_InsertDamageSource] @DamageSource, @DamageType;
 	END
 
-	INSERT INTO [Rolls].[AttackRolls]([HitRollId], [DamageRollId], [DamageSourceId])
+	INSERT INTO [Rolls].[AttackRolls]
+		([HitRollId], [DamageRollId], [DamageSourceId])
 	VALUES(@HitRollId, @DamageRollId, @DamageSourceId)
 	;
 

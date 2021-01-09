@@ -19,7 +19,7 @@ namespace CampaignStatsTracker.Models.Views
         public IEnumerable<Entity> Entities { get; set; }
         public IEnumerable<DamageRoll> DamageRolls { get; set; }
         public string RollComment { get; set; }
-        public int RollModifer { get; set; }
+        public int RollModifier { get; set; }
         public bool RollSucceeded { get; set; }
         public string RollType { get; set; }
         public int RollValue { get; set; }
