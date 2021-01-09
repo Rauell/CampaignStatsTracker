@@ -1,6 +1,7 @@
 import React from 'react';
 import { Row, Col, Table, Button, Input } from 'reactstrap';
 import { dieOptions } from '../../options';
+import ModifierInput from './Inputs/ModifierInput';
 
 export interface IDamageRoll {
   numberOfSides: number,
@@ -11,12 +12,14 @@ interface IProps {
   damageRolls: IDamageRoll[];
   setDamageRolls: (damageRolls: IDamageRoll[]) => void;
   disabled: boolean;
+  damageModifier: number;
+  setDamageModifier: (modifier: number) => void;
 }
 
 const newDefaultDamageRoll = () => ({ numberOfSides: 6, result: 1 });
 
 const AddDamageDice = (props: IProps) => {
-  const { damageRolls, setDamageRolls, ...otherProps } = props;
+  const { damageRolls, setDamageRolls, damageModifier, setDamageModifier, ...otherProps } = props;
 
   const addDamageRoll = () =>
     setDamageRolls(damageRolls.concat(newDefaultDamageRoll()));
@@ -34,6 +37,8 @@ const AddDamageDice = (props: IProps) => {
 
     setDamageRolls(updatedDamageDice);
   }
+
+  const totalDamage = damageRolls.reduce((sum, r) => sum + r.result, 0) + damageModifier;
 
   return (
     <Row>
@@ -84,6 +89,30 @@ const AddDamageDice = (props: IProps) => {
                 </td>
               </tr>
             ))}
+          </tbody>
+        </Table>
+      </Col>
+      <Col md={6}>
+        <Table>
+          <thead>
+            <tr>
+              <th>Damage Modifier</th>
+              <th>Total Damage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <ModifierInput
+                  onChange={setDamageModifier}
+                  modifier={damageModifier}
+                  {...otherProps}
+                />
+              </td>
+              <td>
+                <Input disabled value={isNaN(totalDamage) ? '-' : totalDamage} />
+              </td>
+            </tr>
           </tbody>
         </Table>
       </Col>

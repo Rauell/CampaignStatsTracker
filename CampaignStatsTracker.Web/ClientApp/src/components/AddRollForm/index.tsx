@@ -6,6 +6,8 @@ import { Col, Row, Form, FormGroup, Label, Input, Button, Card, CardHeader, Card
 import { IPublicEntity, IPublicEntityStats, IUser } from '../../types';
 import AddDamageDice, { IDamageRoll } from './AddDamageDice';
 import CharacterSelect from './CharacterSelect';
+import { tryParseInt } from '../../utilities';
+import ModifierInput from './Inputs/ModifierInput';
 
 interface IProps {
   formId?: string,
@@ -19,14 +21,6 @@ const rollTypes = [
   'Attack'
 ];
 
-const tryParseInt = (text: string, defaultValue: number) => {
-  if (text && text.length) {
-    const attempt = parseInt(text);
-    if (!isNaN(attempt)) return attempt;
-  }
-
-  return defaultValue;
-}
 
 const formColumnSizes = { xs: 6, sm: 4, md: 3 };
 
@@ -46,6 +40,7 @@ const AddRollForm = (props: IProps) => {
   const [selectedCharacterId, setSelectedCharacterId] = useState<Guid>(Guid.createEmpty());
 
   const [damageRolls, setDamageRolls] = useState<IDamageRoll[]>([{ numberOfSides: 6, result: 1 }]);
+  const [damageModifier, setDamageModifier] = useState(0);
 
 
   const rollTypeId = getInputId(formId, 'rollType');
@@ -80,6 +75,7 @@ const AddRollForm = (props: IProps) => {
             rollModifier,
             rollSucceeded,
             damageRolls,
+            damageModifier,
             entities: entitiesToUse,
           }),
         }
@@ -102,9 +98,13 @@ const AddRollForm = (props: IProps) => {
     }
   };
 
-  const onAddDamageRollClick = () =>
-    setDamageRolls(damageRolls.concat({ numberOfSides: 6, result: 1 }));
-  ;
+  const damageProps = {
+    setDamageModifier,
+    damageModifier,
+    damageRolls,
+    setDamageRolls,
+    disabled: isSubmitting,
+  };
 
   return (
     <Card>
@@ -138,31 +138,6 @@ const AddRollForm = (props: IProps) => {
             </Col>
             <Col {...formColumnSizes}>
               <FormGroup>
-                <Label for={rollValueId}>Result</Label>
-                <Input
-                  type="number"
-                  min={1}
-                  max={20}
-                  name="value"
-                  id={rollValueId}
-                  value={rollValue}
-                  onChange={e => setRollValue(tryParseInt(e.target.value, 1))}
-                  disabled={isSubmitting}
-                />
-                {/* <Input
-                  type="select"
-                  name="value"
-                  id={rollValueId}
-                  value={rollValue}
-                  onChange={e => setRollValue(parseInt(e.target.value))}
-                  disabled={isSubmitting}
-                >
-                  {Array.from({ length: 20 }, (_, i) => i + 1).map(i => <option key={i} value={i}>{i}</option>)}
-                </Input> */}
-              </FormGroup>
-            </Col>
-            <Col {...formColumnSizes}>
-              <FormGroup>
                 <Label for={skillTypeId}>Skill Type</Label>
                 <Input
                   type="text"
@@ -175,17 +150,29 @@ const AddRollForm = (props: IProps) => {
                 />
               </FormGroup>
             </Col>
+
+            <Col {...formColumnSizes}>
+              <FormGroup>
+                <Label for={rollValueId}>Result</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={20}
+                  name="value"
+                  id={rollValueId}
+                  value={rollValue}
+                  onChange={e => setRollValue(tryParseInt(e.target.value, 1))}
+                  disabled={isSubmitting}
+                />
+              </FormGroup>
+            </Col>
+
             <Col {...formColumnSizes}>
               <FormGroup>
                 <Label for={rollModifiersId}>Modifier</Label>
-                <Input
-                  type="number"
-                  min={-100}
-                  max={100}
-                  name="modifiers"
-                  id={rollModifiersId}
-                  value={rollModifier}
-                  onChange={e => setRollModifier(tryParseInt(e.target.value, 0))}
+                <ModifierInput
+                  modifier={rollModifier}
+                  onChange={setRollModifier}
                   disabled={isSubmitting}
                 />
               </FormGroup>
@@ -222,13 +209,7 @@ const AddRollForm = (props: IProps) => {
               </FormGroup>
             </Col>
           </Row>
-          {rollType === 'Attack' && rollSucceeded &&
-            <AddDamageDice
-              damageRolls={damageRolls}
-              setDamageRolls={setDamageRolls}
-              disabled={isSubmitting}
-            />
-          }
+          {rollType === 'Attack' && rollSucceeded && <AddDamageDice {...damageProps} />}
         </CardBody>
         <CardFooter>
           <Button>Submit</Button>

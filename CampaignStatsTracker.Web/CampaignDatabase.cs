@@ -175,10 +175,10 @@ namespace CampaignStatsTracker.Database
                     // damageModifierTable.Columns.Add("Comment", typeof(string));
                     damageModifierTable.Columns.Add("Value", typeof(int));
 
-                    // var damageModifierRow = damageModifierTable.NewRow();
+                    var damageModifierRow = damageModifierTable.NewRow();
                     // damageModifierRow["Comment"] = "";
-                    // damageModifierRow["Value"] = 0;
-                    // damageModifierTable.Rows.Add(damageModifierRow);
+                    damageModifierRow["Value"] = roll.DamageModifier;
+                    damageModifierTable.Rows.Add(damageModifierRow);
 
                     var skillRollParameter = command.CreateParameter();
                     skillRollParameter.TypeName = "[Rolls].[DieRollType]";
