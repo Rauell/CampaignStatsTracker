@@ -1,5 +1,3 @@
-import { Guid } from "guid-typescript";
-
 /* Begin Section Common */
 export interface IPublicEntity {
   publicId: string;
