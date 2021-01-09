@@ -1,12 +1,13 @@
 import React from 'react';
-import { Table } from 'reactstrap';
-import { IPublicStats } from '../../types';
+import { Table, Badge } from 'reactstrap';
+import { INamedPublicEntityStats } from '../../types';
 
 interface IProps {
-  stats: IPublicStats | IPublicStats[];
+  stats: INamedPublicEntityStats | INamedPublicEntityStats[];
 };
 
 const toPercentString = (value: number) => `${(value * 100).toFixed(1)}%`
+const toRawValueString = (value: number) => value.toFixed(1);
 
 const StatsTable = (props: IProps) => {
   const { stats } = props;
@@ -32,24 +33,34 @@ const StatsTable = (props: IProps) => {
         {loopStats.map(s => (
           <tr key={s.publicId}>
             <th scope="row">{s.name}</th>
-            <td>{s.stats.skill.average}</td>
-            {/* <td>{s.stats.skill.typeMode}</td> */}
             <td>
-              {toPercentString(s.stats.skill.successRate)}
+              <Badge>
+                {toRawValueString(s.stats.skill.average)}
+              </Badge>
             </td>
             <td>
-              <span className="table-success">
+              <Badge>
+                {toPercentString(s.stats.skill.successRate)}
+              </Badge>
+            </td>
+            <td>
+              <Badge color="success">
                 {toPercentString(s.stats.skill.criticalSuccessRate)}
-              </span>
-              {'/'}
-              <span className="table-danger">
+              </Badge>
+              {'  |  '}
+              <Badge color="danger">
                 {toPercentString(s.stats.skill.criticalFailureRate)}
-              </span>
+              </Badge>
             </td>
-            <td>{s.stats.damage.average}</td>
-            {/* <td>{s.stats.damage.attackMode}</td> */}
             <td>
-              {toPercentString(s.stats.damage.successRate)}
+              <Badge>
+                {toRawValueString(s.stats.damage.average)}
+              </Badge>
+            </td>
+            <td>
+              <Badge>
+                {toPercentString(s.stats.damage.successRate)}
+              </Badge>
             </td>
           </tr>
         ))}

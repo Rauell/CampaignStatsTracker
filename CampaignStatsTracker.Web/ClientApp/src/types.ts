@@ -59,6 +59,10 @@ export interface IPublicEntityStats extends IPublicEntity {
   stats: ICombinedStats;
 }
 
+export interface INamedPublicEntityStats extends IPublicEntityStats {
+  name: string;
+}
+
 /* End Section Stats */
 
 /* Begin Section Users */

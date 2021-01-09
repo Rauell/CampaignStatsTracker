@@ -81,7 +81,7 @@ BEGIN
 				COUNT(CASE WHEN R.[RawValue] = 20 THEN 1 ELSE NULL END) AS [D20SkillCritSuccessCount],
 				COUNT(CASE WHEN R.[RawValue] = 1 THEN 1 ELSE NULL END) AS [D20SkillCritFailureCount],
 				SUM(CAST(SR.[Success] AS INT)) AS [D20SkillSuccessCount],
-				AVG(R.[Value]) AS [D20SkillAverage]
+			AVG(CAST(R.[Value] AS FLOAT)) AS [D20SkillAverage]
 			FROM #Rolls R
 				INNER JOIN [Rolls].[SkillRolls] SR
 					ON SR.[RollId] = R.[RollId]
@@ -109,8 +109,8 @@ BEGIN
 				COUNT(CASE WHEN R.[RawValue] = 20 THEN 1 ELSE NULL END) AS [D20AttackCritSuccessCount],
 				COUNT(CASE WHEN R.[RawValue] = 1 THEN 1 ELSE NULL END) AS [D20AttackCritFailureCount] ,
 				COUNT(DR.[RollId]) AS [D20AttackSuccessCount],
-				AVG(R.[Value]) AS [D20AttackAverage],
-				AVG(DR.[Value]) AS [DamageAverage]
+			AVG(CAST(R.[Value] AS FLOAT)) AS [D20AttackAverage],
+			AVG(CAST(DR.[Value] AS FLOAT)) AS [DamageAverage]
 			FROM #Rolls R
 				INNER JOIN [Rolls].[AttackRolls] AR
 					ON AR.[HitRollId] = R.[RollId]
