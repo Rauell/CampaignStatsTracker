@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Guid } from "guid-typescript";
 import { Col, Row, Form, FormGroup, Label, Input, Button, Card, CardHeader, CardBody, CardFooter, Table, Spinner } from 'reactstrap';
-import { useApiJsonResponse } from '../../hooks/useApi';
+// import { useApiJsonResponse } from '../../hooks/useApi';
 // import LoadingSpinner from '../LoadingSpinner';
 import { IPublicEntity, IPublicEntityStats, IUser } from '../../types';
 import AddDamageDice, { IDamageRoll } from './AddDamageDice';
+import CharacterSelect from './CharacterSelect';
 
 interface IProps {
   formId?: string,
@@ -33,8 +34,6 @@ const getInputId = (id: string, formId: string) => `${formId}-${id}`;
 
 const AddRollForm = (props: IProps) => {
   const { formId = '', entities = [], onSubmitSuccess, characters } = props;
-  // const [formControls, setFormControls] = useState<IFormControls>(null);
-  // const { isLoading } = useApiJsonResponse(setFormControls, '/api/rolls/controls');
   const isLoading = false;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,7 +43,7 @@ const AddRollForm = (props: IProps) => {
   const [rollModifier, setRollModifier] = useState(0);
   const [rollComment, setRollComment] = useState('');
   const [rollSucceeded, setRollSucceeded] = useState(false);
-  const [selectedCharacterId, setSelectedCharacterId] = useState<string>(Guid.EMPTY);
+  const [selectedCharacterId, setSelectedCharacterId] = useState<Guid>(Guid.createEmpty());
 
   const [damageRolls, setDamageRolls] = useState<IDamageRoll[]>([{ numberOfSides: 6, result: 1 }]);
 
@@ -62,7 +61,7 @@ const AddRollForm = (props: IProps) => {
 
     const entitiesToUse = entities.map(e => ({ publicId: e.publicId }));
 
-    if (selectedCharacterId !== Guid.EMPTY) entitiesToUse.push({ publicId: selectedCharacterId });
+    if (selectedCharacterId.toString() !== Guid.EMPTY) entitiesToUse.push({ publicId: selectedCharacterId.toString() });
 
     setIsSubmitting(true);
     try {
@@ -116,27 +115,11 @@ const AddRollForm = (props: IProps) => {
 
       <Form id={formId} onSubmit={onSubmit}>
         <CardBody>
-          {/* <Input hidden type="number" name="numberOfSides" id={rollNumberOfSidesId} /> */}
-          {characters &&
-            <Row>
-              <Col>
-                <FormGroup>
-                  <Label for="characterId">Character Select</Label>
-                  <Input
-                    type="select"
-                    name="character"
-                    id="characterId"
-                    value={selectedCharacterId.toString()}
-                    onChange={e => setSelectedCharacterId(e.target.value)}
-                    disabled={isSubmitting}
-                  >
-                    <option value={Guid.EMPTY}></option>
-                    {characters.map(c => <option key={c.publicId} value={c.publicId}>{c.name}</option>)}
-                  </Input>
-                </FormGroup>
-              </Col>
-            </Row>
-          }
+          <CharacterSelect
+            characters={characters}
+            disabled={isSubmitting}
+            onChange={setSelectedCharacterId}
+          />
           <Row className="align-item-center">
             <Col {...formColumnSizes}>
               <FormGroup>
