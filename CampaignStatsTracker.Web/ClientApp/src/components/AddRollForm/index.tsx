@@ -4,6 +4,7 @@ import { Col, Row, Form, FormGroup, Label, Input, Button, Card, CardHeader, Card
 import { useApiJsonResponse } from '../../hooks/useApi';
 // import LoadingSpinner from '../LoadingSpinner';
 import { IPublicEntity, IPublicEntityStats, IUser } from '../../types';
+import AddDamageDice, { IDamageRoll } from './AddDamageDice';
 
 interface IProps {
   formId?: string,
@@ -12,19 +13,10 @@ interface IProps {
   characters?: IUser[],
 }
 
-interface IDamageRoll {
-  numberOfSides: number,
-  result: number,
-}
-
 const rollTypes = [
   'Skill',
   'Attack'
 ];
-
-const dieOptions = [
-  4, 6, 8, 10, 12, 20, 100
-]
 
 const tryParseInt = (text: string, defaultValue: number) => {
   if (text && text.length) {
@@ -114,21 +106,6 @@ const AddRollForm = (props: IProps) => {
   const onAddDamageRollClick = () =>
     setDamageRolls(damageRolls.concat({ numberOfSides: 6, result: 1 }));
   ;
-
-  const removeDamageRollAt = (index: number) =>
-    setDamageRolls(damageRolls.filter((_, i) => index !== i))
-    ;
-
-  const updateDamageDieAt = (index: number, die: number, result: number) => {
-    const updatedDamageDice = [...damageRolls];
-    updatedDamageDice[index].numberOfSides = die;
-
-    if (result > die) updatedDamageDice[index].result = die;
-    else if (result < 1) updatedDamageDice[index].result = 1;
-    else updatedDamageDice[index].result = result;
-
-    setDamageRolls(updatedDamageDice);
-  }
 
   return (
     <Card>
@@ -263,60 +240,11 @@ const AddRollForm = (props: IProps) => {
             </Col>
           </Row>
           {rollType === 'Attack' && rollSucceeded &&
-            <Row>
-              <Col md={6}>
-                <Table>
-                  <thead>
-                    <tr>
-                      <th>
-                        <Button szie="sm" type="button" onClick={onAddDamageRollClick} disabled={isSubmitting}>
-                          {'Add'}
-                        </Button>
-                      </th>
-                      <th>
-                        <span>
-                          {'Die'}
-                        </span>
-                      </th>
-                      <th>Result</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {damageRolls.map((d, i) => (
-                      <tr key={i}>
-                        <td>
-                          <Button size="sm" type="button" onClick={_ => removeDamageRollAt(i)} disabled={isSubmitting}>
-                            {'Remove'}
-                          </Button>
-                        </td>
-                        <td>
-                          <Input
-                            type="select"
-                            name={getInputId(formId, `damageDieType-${i}`)}
-                            value={d.numberOfSides}
-                            onChange={e => updateDamageDieAt(i, parseInt(e.target.value), d.result)}
-                            disabled={isSubmitting}
-                          >
-                            {dieOptions.map(option => <option value={option} key={option}>{option}</option>)}
-                          </Input>
-                        </td>
-                        <td>
-                          <Input
-                            type="number"
-                            min="1"
-                            max={d.numberOfSides}
-                            value={d.result}
-                            onChange={e => updateDamageDieAt(i, d.numberOfSides, parseInt(e.target.value))}
-                            disabled={isSubmitting}
-                          />
-                        </td>
-
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </Col>
-            </Row>
+            <AddDamageDice
+              damageRolls={damageRolls}
+              setDamageRolls={setDamageRolls}
+              disabled={isSubmitting}
+            />
           }
         </CardBody>
         <CardFooter>
