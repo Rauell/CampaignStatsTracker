@@ -2,9 +2,9 @@ CREATE PROCEDURE [Rolls].[Sto_GetRollStatsForEntities]
 	@Entities [Entities].[EntitiesType] READONLY
 AS
 BEGIN
-	CREATE TABLE #Stats
+		CREATE TABLE #Stats
 	(
-		[PublicId]									UNIQUEIDENTIFIER,
+		[EntityId]									INT,
 		[D20SkillCount]							INT,
 		[D20SkillCritSuccessCount]	INT,
 		[D20SkillCritFailureCount]	INT,
@@ -19,22 +19,31 @@ BEGIN
 		-- [D20AttackMode]					INT,
 		[D20AttackAverage]					FLOAT,
 		-- [DamageSourceMode]			VARCHAR(50)
-		[DamageAverage]							FLOAT
+		[DamageAverage]							FLOAT,
+		[D20InitCount]							INT,
+		[D20InitAverage]						FLOAT,
+		[InitRankAverage]						FLOAT,
 	);
 	CREATE TABLE #Rolls (
 		[RollId] INT,
-		[PublicId] UNIQUEIDENTIFIER NOT NULL,
+		[EntityId] INT NOT NULL,
 		[RawValue] INT NOT NULL,
 		[Value] INT NOT NULL,
 		[IsSingleD20] BIT NOT NULL,
+		[IsDamage] BIT NOT NULL,
+		[IsAttack] BIT NOT NULL,
+		[IsInitiative] BIT NOT NULL,
+		[IsSkill] BIT NOT NULL,
+		[Success] BIT,
+		[Rank] INT
 
-		CONSTRAINT [RollId_PublicId] UNIQUE ([RollId], [PublicId])
+		CONSTRAINT [RollId_EntityId] UNIQUE ([RollId], [EntityId])
 	);
 
 	INSERT INTO #Rolls
 	SELECT
 		R2E.[RollId],
-		EE.[PublicId],
+		EE.[EntityId],
 		SUM(IR.[Value]) AS [RawValue],
 		(SUM(IR.[Value]) + SUM(ISNULL(RM.[Value], 0))) AS [Value],
 		CAST(
@@ -43,7 +52,21 @@ BEGIN
 				WHEN MAX(DT.[NumberOfSides]) <> 20 THEN 0
 				ELSE 1
 			END
-		AS BIT) AS IsSingleD20
+		AS BIT) AS IsSingleD20,
+		CAST(
+			CASE WHEN COUNT(DR.[AttackRollId]) > 0 THEN 1 ELSE 0 END
+		AS BIT) AS [IsDamage],
+		CAST(
+			CASE WHEN COUNT(AR.[AttackRollId]) > 0 THEN 1 ELSE 0 END
+		AS BIT) AS [IsAttack],
+		CAST(
+			CASE WHEN COUNT(InitR.[InitiativeRollId]) > 0 THEN 1 ELSE 0 END
+		AS BIT) AS [IsInitiative],
+		CAST(
+			CASE WHEN COUNT(SR.[SkillRollId]) > 0 THEN 1 ELSE 0 END
+		AS BIT) AS [IsSkill],
+		SR.[Success],
+		InitR.[Rank]
 	FROM @Entities E
 		INNER JOIN [Entities].[Entities] AS EE
 			ON EE.[PublicId] = E.[PublicId]
@@ -57,15 +80,26 @@ BEGIN
 			ON DT.[DieTypeId] = IR.[DieTypeId]
 		LEFT JOIN [Rolls].[RollModifiers] AS RM
 			ON RM.[RollId] = RR.[RollId]
+		LEFT JOIN [Rolls].[AttackRolls] AS AR
+			ON AR.[HitRollId] = RR.[RollId]
+		LEFT JOIN [Rolls].[AttackRolls] AS DR
+			ON DR.[DamageRollId] = RR.[RollId]
+		LEFT JOIN [Rolls].[SkillRolls] AS SR
+			ON SR.[RollId] = RR.[RollId]
+		LEFT JOIN [Rolls].[InitiativeRolls] AS InitR
+			ON InitR.[RollId] = RR.[RollId]
 	GROUP BY
 		R2E.[RollId],
-		EE.[PublicId]
+		EE.[EntityId],
+		SR.[Success],
+		InitR.[Rank]
 	;
 
-	INSERT INTO #Stats([PublicId])
-	SELECT DISTINCT [PublicId] FROM @Entities
+	INSERT INTO #Stats([EntityId])
+	SELECT DISTINCT [EntityId] FROM @Entities E INNER JOIN Entities.Entities EE ON EE.PublicId = E.PublicId
 	;
 
+	-- Skill
 	UPDATE #Stats
 	SET
 		[D20SkillCount] = ISNULL(NS.[D20SkillCount], 0),
@@ -76,56 +110,91 @@ BEGIN
 	FROM #Stats S
 		LEFT JOIN (
 			SELECT
-				R.[PublicId],
-				COUNT(SR.[SkillRollId]) AS [D20SkillCount],
+				R.[EntityId],
+				COUNT(R.[EntityId]) AS [D20SkillCount],
 				COUNT(CASE WHEN R.[RawValue] = 20 THEN 1 ELSE NULL END) AS [D20SkillCritSuccessCount],
 				COUNT(CASE WHEN R.[RawValue] = 1 THEN 1 ELSE NULL END) AS [D20SkillCritFailureCount],
-				SUM(CAST(SR.[Success] AS INT)) AS [D20SkillSuccessCount],
-			AVG(CAST(R.[Value] AS FLOAT)) AS [D20SkillAverage]
+				SUM(CAST(R.[Success] AS INT)) AS [D20SkillSuccessCount],
+				AVG(CAST(R.[Value] AS FLOAT)) AS [D20SkillAverage]
 			FROM #Rolls R
-				INNER JOIN [Rolls].[SkillRolls] SR
-					ON SR.[RollId] = R.[RollId]
 			WHERE
-				R.[IsSingleD20] = 1
+				R.[IsSkill] = 1
 			GROUP BY
-				R.[PublicId]
+				R.[EntityId]
 		) AS NS
-			ON NS.[PublicId] = S.[PublicId]
+			ON NS.[EntityId] = S.[EntityId]
 	;
 
+	-- Attack
 	UPDATE #Stats
 	SET
 		[D20AttackCount] = ISNULL(NS.[D20AttackCount], 0),
 		[D20AttackCritSuccessCount] = ISNULL(NS.[D20AttackCritSuccessCount], 0),
 		[D20AttackCritFailureCount] = ISNULL(NS.[D20AttackCritFailureCount], 0),
 		[D20AttackSuccessCount] = ISNULL(NS.[D20AttackSuccessCount], 0),
-		[D20AttackAverage] = NS.[D20AttackAverage],
+		[D20AttackAverage] = NS.[D20AttackAverage]
+	FROM #Stats S
+		LEFT JOIN (
+			SELECT
+				R.[EntityId],
+				COUNT(R.[EntityId]) AS [D20AttackCount],
+				COUNT(CASE WHEN R.[RawValue] = 20 THEN 1 ELSE NULL END) AS [D20AttackCritSuccessCount],
+				COUNT(CASE WHEN R.[RawValue] = 1 THEN 1 ELSE NULL END) AS [D20AttackCritFailureCount] ,
+				SUM(CAST(R.[Success] AS INT)) AS [D20AttackSuccessCount],
+				AVG(CAST(R.[Value] AS FLOAT)) AS [D20AttackAverage]
+			FROM #Rolls R
+			WHERE
+				R.[IsAttack] = 1
+			GROUP BY
+				R.[EntityId]
+		) AS NS
+			ON S.[EntityId] = NS.[EntityId]
+	;
+
+	-- Damage
+	UPDATE #Stats
+	SET
 		[DamageAverage] = NS.[DamageAverage]
 	FROM #Stats S
 		LEFT JOIN (
 			SELECT
-				R.[PublicId],
-				COUNT(AR.[AttackRollId]) AS [D20AttackCount],
-				COUNT(CASE WHEN R.[RawValue] = 20 THEN 1 ELSE NULL END) AS [D20AttackCritSuccessCount],
-				COUNT(CASE WHEN R.[RawValue] = 1 THEN 1 ELSE NULL END) AS [D20AttackCritFailureCount] ,
-				COUNT(DR.[RollId]) AS [D20AttackSuccessCount],
-			AVG(CAST(R.[Value] AS FLOAT)) AS [D20AttackAverage],
-			AVG(CAST(DR.[Value] AS FLOAT)) AS [DamageAverage]
+				R.[EntityId],
+				AVG(CAST(R.[Value] AS FLOAT)) AS [DamageAverage]
 			FROM #Rolls R
-				INNER JOIN [Rolls].[AttackRolls] AR
-					ON AR.[HitRollId] = R.[RollId]
-				LEFT JOIN #Rolls DR
-					ON DR.[RollId] = AR.[DamageRollId]
 			WHERE
-				R.[IsSingleD20] = 1
+				R.[IsDamage] = 1
 			GROUP BY
-				R.[PublicId]
+				R.[EntityId]
 		) AS NS
-			ON S.[PublicId] = NS.[PublicId]
+			ON S.[EntityId] = NS.[EntityId]
 	;
 
-	SELECT *
-	FROM #Stats
+	-- Initiative
+	UPDATE #Stats
+	SET
+		[D20InitCount] = ISNULL(NS.[D20InitCount], 0),
+		[D20InitAverage] = NS.[D20InitAverage],
+		[InitRankAverage] = NS.[InitRankAverage]
+	FROM #Stats S
+		LEFT JOIN (
+			SELECT
+				R.[EntityId],
+				COUNT(R.[EntityId]) AS [D20InitCount],
+				AVG(CAST(R.[Value] AS FLOAT)) AS [D20InitAverage],
+				AVG(CAST(R.[Rank] AS FLOAT)) AS [InitRankAverage]
+			FROM #Rolls R
+			WHERE
+				R.[IsInitiative] = 1
+			GROUP BY
+				R.[EntityId]
+		) AS NS
+			ON S.[EntityId] = NS.[EntityId]
+	;
+
+	SELECT EE.[PublicId], S.*
+	FROM #Stats S
+		INNER JOIN [Entities].[Entities] AS EE
+			ON EE.[EntityId] = S.[EntityId]
 	;
 
 	DROP TABLE #Rolls, #Stats;
