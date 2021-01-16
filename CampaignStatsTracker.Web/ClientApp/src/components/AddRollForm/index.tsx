@@ -127,11 +127,17 @@ const AddRollForm = (props: IProps) => {
 
       <Form id={formId} onSubmit={onSubmit}>
         <CardBody>
-          <CharacterSelect
-            characters={characters}
-            disabled={isSubmitting}
-            onChange={setSelectedCharacterId}
-          />
+          {!characters?.length ? null :
+            <Row>
+              <Col>
+                <CharacterSelect
+                  characters={characters}
+                  disabled={isSubmitting}
+                  onChange={setSelectedCharacterId}
+                />
+              </Col>
+            </Row>
+          }
           <Row className="align-item-center">
             <Col {...formColumnSizes}>
               <FormGroup>

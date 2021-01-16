@@ -4,7 +4,7 @@ import { Guid } from "guid-typescript";
 import { IUser } from '../../types';
 
 interface IProps {
-  characters?: IUser[];
+  characters: IUser[];
   disabled?: boolean;
   onChange?: (id: Guid) => void
 }
@@ -22,26 +22,20 @@ const CharacterSelect = (props: IProps) => {
     disabled,
   };
 
-  if (!characters) return null;
-
   return (
-    <Row>
-      <Col>
-        <FormGroup>
-          <Label for="characterId">Character Select</Label>
-          <Input
-            type="select"
-            name="character"
-            id="characterId"
-            value={characterId.toString()}
-            {...inputProps}
-          >
-            <option value={Guid.EMPTY}></option>
-            {characters.map(c => <option key={c.publicId.toString()} value={c.publicId.toString()}>{c.name}</option>)}
-          </Input>
-        </FormGroup>
-      </Col>
-    </Row>
+    <FormGroup>
+      <Label for="characterId">Character Select</Label>
+      <Input
+        type="select"
+        name="character"
+        id="characterId"
+        value={characterId.toString()}
+        {...inputProps}
+      >
+        <option value={Guid.EMPTY}></option>
+        {characters.map(c => <option key={c.publicId.toString()} value={c.publicId.toString()}>{c.name}</option>)}
+      </Input>
+    </FormGroup>
   );
 };
 
