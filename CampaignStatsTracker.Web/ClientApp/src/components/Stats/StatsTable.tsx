@@ -16,7 +16,7 @@ const StatsTable = (props: IProps) => {
   if (!loopStats.length) return null;
 
   return (
-    <Table striped hover bordered>
+    <Table striped hover bordered responsive>
       <thead>
         <tr>
           <th scope="col">Name</th>

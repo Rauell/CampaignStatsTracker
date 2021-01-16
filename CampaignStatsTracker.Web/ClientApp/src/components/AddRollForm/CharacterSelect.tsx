@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Row, Col, FormGroup, Label, Input } from "reactstrap";
+import { FormGroup, Label, Input } from "reactstrap";
 import { Guid } from "guid-typescript";
 import { IUser } from '../../types';
 
