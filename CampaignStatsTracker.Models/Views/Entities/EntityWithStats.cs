@@ -7,5 +7,6 @@ namespace CampaignStatsTracker.Models.Views.Entities
     public class EntityWithStats : Entity
     {
         public CombinedStats Stats { get; set; }
+        public IEnumerable<RollListingDto> LatestRolls { get; set; }
     }
 }

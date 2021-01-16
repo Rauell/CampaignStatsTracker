@@ -7,7 +7,7 @@ import { ICampaignStats } from '../../types';
 import StatsTable from '../Stats/StatsTable';
 import AddRollForm from '../AddRollForm';
 import { IPublicEntityStats, IPublicEntity } from '../../types';
-import CampaignListingPage from '../CampaignListingPage';
+import RollTable from '../RollTable';
 
 interface IParams {
   campaignId: string;
@@ -46,10 +46,13 @@ const CampaignPage = () => {
       const newCampaignStats = newStats.filter(s => s.publicId === campaign?.publicId)[0];
       setCampaign({
         ...campaign,
-        stats: { ...newCampaignStats.stats }
+        stats: newCampaignStats.stats,
+        latestRolls: newCampaignStats.latestRolls,
       });
     }
   };
+
+  console.log(campaign?.latestRolls);
 
   return (
     <Container>
@@ -68,41 +71,43 @@ const CampaignPage = () => {
 
             <hr />
 
-            <Row>
+            {/* <Row>
               <Col>
                 <h2>Campaign Stats</h2>
-                {/* <Button type="button" onClick={refreshData}>Refresh</Button> */}
               </Col>
-            </Row>
+            </Row> */}
 
             <Row>
-              <Col>
-                <LoadingSpinner isLoading={isLoadingRefresh}>
+              <LoadingSpinner isLoading={isLoadingRefresh}>
+                <Col>
                   <StatsTable stats={campaign} />
-                </LoadingSpinner>
-              </Col>
+                </Col>
+              </LoadingSpinner>
             </Row>
             <hr />
             <Row>
-              <Col>
+              <Col md={7}>
+                <RollTable rolls={campaign.latestRolls} />
+              </Col>
+              <Col md={5}>
                 <AddRollForm entities={[campaign]} characters={campaign.characters} onSubmitSuccess={onNewDieResult} />
               </Col>
             </Row>
 
-            {campaign.users &&
+            {/* {campaign.characters &&
               <Row>
                 <Col>
                   <LoadingSpinner isLoading={isLoadingRefresh}>
-                    <StatsTable stats={campaign.users} />
+                    <StatsTable stats={campaign.characters} />
                   </LoadingSpinner>
                 </Col>
               </Row>
-            }
+            } */}
 
           </>
         }
       </LoadingSpinner>
-    </Container>
+    </Container >
   );
 }
 

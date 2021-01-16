@@ -62,6 +62,9 @@ namespace CampaignStatsTracker.Database
 
                 var stats = await reader.ReadSingleOrDefaultAsync<DatabaseStatsDto>();
                 campaign.Stats = stats.ToCombinedStats();
+
+                var rolls = await reader.ReadAsync<RollListingDto>();
+                campaign.LatestRolls = rolls;
             }
 
             return campaign;
@@ -69,6 +72,14 @@ namespace CampaignStatsTracker.Database
 
         public async Task<IEnumerable<EntityWithStats>> GetStatsAsync(IEnumerable<Guid> publicIds) =>
             await GetStatsAsync(publicIds.Select(p => new Entity() { PublicId = p }));
+
+
+        private async Task<EntityWithStats> PopulateEntityWithStatsAsync(DatabaseStatsDto stats)
+        {
+            var entity = stats.ToEntityWithStats();
+            entity.LatestRolls = await GetLatestRollsAsync(stats.PublicId);
+            return entity;
+        }
 
         public async Task<IEnumerable<EntityWithStats>> GetStatsAsync(IEnumerable<Entity> entities)
         {
@@ -87,18 +98,19 @@ namespace CampaignStatsTracker.Database
 
             using (SqlConnection connection = new SqlConnection(_connectionBuilder.ConnectionString))
             {
-                var reader = await connection.QueryMultipleAsync(
+                var stats = await connection.QueryAsync<DatabaseStatsDto>(
                     "[Rolls].[Sto_GetRollStatsForEntities]",
                     new { Entities = entityTable },
                     commandType: CommandType.StoredProcedure
                 );
 
-                var stats = await reader.ReadAsync<DatabaseStatsDto>();
+                var tasks = await Task.WhenAll(stats.Select(s => PopulateEntityWithStatsAsync(s)));
 
-                return stats.Select(s => s.ToEntityWithStats());
+                return tasks.Where(r => r != null);
             }
         }
 
+        #region Parameters
         private SqlParameter getParameter(SqlCommand command, string name, object value)
         {
             var parameter = command.CreateParameter();
@@ -246,7 +258,7 @@ namespace CampaignStatsTracker.Database
             var parameter = getParameter(command, "@Rank", roll.InitiativeRank);
             command.Parameters.Add(parameter);
         }
-
+        #endregion
         public async Task InsertRollAsync(RollPost roll)
         {
             //TODO: USE DAPPER FOR GOD'S SAKE
@@ -292,6 +304,18 @@ namespace CampaignStatsTracker.Database
                 }
 
                 var reader = await command.ExecuteReaderAsync();
+            }
+        }
+
+        public async Task<IEnumerable<RollListingDto>> GetLatestRollsAsync(Guid publicId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionBuilder.ConnectionString))
+            {
+                return await connection.QueryAsync<RollListingDto>(
+                    "[Rolls].[Sto_GetLastRollsForEntity]",
+                    new { PublicId = publicId },
+                    commandType: CommandType.StoredProcedure
+                );
             }
         }
     }

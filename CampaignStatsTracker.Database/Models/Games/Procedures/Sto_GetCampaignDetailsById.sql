@@ -39,6 +39,8 @@ BEGIN
 
 	EXEC [Rolls].[Sto_GetRollStatsForEntity] @PublicId;
 
+	EXEC [Rolls].[Sto_GetLastRollsForEntity] @PublicId;
+
 END
 
 GO

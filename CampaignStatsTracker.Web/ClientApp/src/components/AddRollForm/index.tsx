@@ -42,7 +42,6 @@ const AddRollForm = (props: IProps) => {
   const [damageRolls, setDamageRolls] = useState<IDamageRoll[]>([{ numberOfSides: 6, result: 1 }]);
   const [damageModifier, setDamageModifier] = useState(0);
 
-
   const rollTypeId = getInputId(formId, 'rollType');
   const skillTypeId = getInputId(formId, 'skillType');
   const rollValueId = getInputId(formId, 'rollValue');

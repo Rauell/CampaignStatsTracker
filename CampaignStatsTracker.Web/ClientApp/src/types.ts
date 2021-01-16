@@ -1,6 +1,7 @@
 /* Begin Section Common */
 export interface IPublicEntity {
   publicId: string;
+  dateCreated: string;
 }
 
 interface INamedPublicEntity extends IPublicEntity {
@@ -11,25 +12,10 @@ interface INamedPublicEntity extends IPublicEntity {
 /* Begin Section Rolls */
 export const defaultMaxDieRoll = 20;
 
-export interface IRollComment {
-  comment: string;
-}
-
-export interface IRollDamage {
+export interface IRoll extends IPublicEntity {
   value: number;
-  type?: string;
-  source?: string;
-  target?: string;
-  comments?: IRollComment[];
-}
-
-export interface IRoll {
-  type: string;
-  value: number;
-  damage?: IRollDamage;
-  maxDieRoll?: number;
-  id: string;
-  comments?: IRollComment[];
+  modifier: number;
+  rollType: string;
 }
 /* End Section Rolls */
 
@@ -55,6 +41,7 @@ export interface ICombinedStats {
 
 export interface IPublicEntityStats extends IPublicEntity {
   stats: ICombinedStats;
+  latestRolls: IRoll[];
 }
 
 export interface INamedPublicEntityStats extends IPublicEntityStats {
