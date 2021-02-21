@@ -8,7 +8,6 @@ interface IProps {
 const LoadingSpinner = (props: React.PropsWithChildren<IProps>) => {
   const { children, isLoading } = props;
 
-
   if (!isLoading) {
     return <>{children}</>;
   }

@@ -14,6 +14,19 @@
             "problemMatcher": "$msCompile"
         },
         {
+            "label": "build-site-release",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "--configuration=Release",
+                "${workspaceFolder}/CampaignStatsTracker.Web/CampaignStatsTracker.Web.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
             "label": "publish",
             "command": "dotnet",
             "type": "process",
@@ -26,13 +39,44 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "watch",
+            "label": "watch-site",
+            "command": "dotnet",
+            "type": "process",
+            "options": {
+                "cwd": "${workspaceFolder}/CampaignStatsTracker.Web"
+            },
+            "args": [
+                "watch",
+                "build",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "build-db-migration",
             "command": "dotnet",
             "type": "process",
             "args": [
-                "watch",
-                "run",
-                "${workspaceFolder}/CampaignStatsTracker.Web/CampaignStatsTracker.Web.csproj",
+                "build",
+                "${workspaceFolder}/CampaignStatsTracker.DatabaseMigrations/CampaignStatsTracker.DatabaseMigrations.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "build-db-migration-release",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "--configuration=Release",
+                "${workspaceFolder}/CampaignStatsTracker.DatabaseMigrations/CampaignStatsTracker.DatabaseMigrations.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],

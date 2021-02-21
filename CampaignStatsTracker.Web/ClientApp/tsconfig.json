@@ -4,7 +4,8 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "ES2019"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -22,5 +23,8 @@
   "include": [
     "src"
   ],
-  "exclude": ["node_modules", "build"]
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
 }

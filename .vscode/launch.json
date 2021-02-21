@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (web)",
+            "name": "Launch Website",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -29,6 +29,54 @@
             "type": "coreclr",
             "request": "attach",
             "processId": "${command:pickProcess}"
+        },
+        {
+            "name": "Launch Website (Release)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-site-release",
+            "program": "${workspaceFolder}/CampaignStatsTracker.Web/bin/Release/netcoreapp3.1/CampaignStatsTracker.Web.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/CampaignStatsTracker.Web",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Release"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
+            "name": "Migrate Database",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-db-migration",
+            "program": "${workspaceFolder}/CampaignStatsTracker.DatabaseMigrations/bin/Debug/netcoreapp3.1/CampaignStatsTracker.DatabaseMigrations.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/CampaignStatsTracker.DatabaseMigrations",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Release"
+            }
+        },
+        {
+            "name": "Migrate Database (Release)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-db-migration-release",
+            "program": "${workspaceFolder}/CampaignStatsTracker.DatabaseMigrations/bin/Release/netcoreapp3.1/CampaignStatsTracker.DatabaseMigrations.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/CampaignStatsTracker.DatabaseMigrations",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Release"
+            }
         }
     ]
 }

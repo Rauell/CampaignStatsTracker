@@ -2,11 +2,11 @@ using System;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using CampaignStatsTracker.Models.Views.Entities;
 using CampaignStatsTracker.Models.Views;
+using CampaignStatsTracker.DTOs.Client;
 using Dapper;
 
 namespace CampaignStatsTracker.Database
@@ -21,7 +21,8 @@ namespace CampaignStatsTracker.Database
 
             _connectionBuilder.DataSource = "localhost\\SQLEXPRESS";
             _connectionBuilder.IntegratedSecurity = true;
-            _connectionBuilder.InitialCatalog = "CampaignStatsTracker.Database";
+            // _connectionBuilder.InitialCatalog = "CampaignStatsTracker";
+            _connectionBuilder.InitialCatalog = "TrackerTest";
         }
 
         public async Task<IEnumerable<Campaign>> GetCampaigns()
@@ -307,12 +308,72 @@ namespace CampaignStatsTracker.Database
             }
         }
 
+        public async Task InsertAttackRollAsync(ClientRollDTO roll)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionBuilder.ConnectionString))
+            {
+                await connection.QueryAsync(
+                    "[Rolls].[Sto_InsertAttackRoll]",
+                    roll.AsRepositoryAttackRoll(),
+                    commandType: CommandType.StoredProcedure
+                );
+            }
+        }
+
+        public async Task InsertSkillRollAsync(ClientRollDTO roll)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionBuilder.ConnectionString))
+            {
+                await connection.QueryAsync(
+                    "[Rolls].[Sto_InsertSkillRoll]",
+                    roll.AsRepositorySkillRoll(),
+                    commandType: CommandType.StoredProcedure
+                );
+            }
+        }
+
+        public async Task InsertDamageRollAsync(ClientRollDTO roll)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionBuilder.ConnectionString))
+            {
+                await connection.QueryAsync(
+                    "[Rolls].[Sto_InsertDamageRoll]",
+                    roll.AsRepositoryDamageRoll(),
+                    commandType: CommandType.StoredProcedure
+                );
+            }
+        }
+
+        public async Task InsertInitiativeRollAsync(ClientRollDTO roll)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionBuilder.ConnectionString))
+            {
+                await connection.QueryAsync(
+                    "[Rolls].[Sto_InsertInitiativeRoll]",
+                    roll.AsRepositoryInitiatveRoll(),
+                    commandType: CommandType.StoredProcedure
+                );
+            }
+        }
+
         public async Task<IEnumerable<RollListingDto>> GetLatestRollsAsync(Guid publicId)
         {
             using (SqlConnection connection = new SqlConnection(_connectionBuilder.ConnectionString))
             {
                 return await connection.QueryAsync<RollListingDto>(
                     "[Rolls].[Sto_GetLastRollsForEntity]",
+                    new { PublicId = publicId },
+                    commandType: CommandType.StoredProcedure
+                );
+            }
+        }
+
+        public async Task<RollPost> GetRollDetailsAsync(Guid publicId)
+        {
+            using (SqlConnection connection = new SqlConnection(_connectionBuilder.ConnectionString))
+            {
+                return await connection.QuerySingleOrDefaultAsync<RollPost>(
+                    "[Rolls].[Sto_GetRollDetails]",
                     new { PublicId = publicId },
                     commandType: CommandType.StoredProcedure
                 );

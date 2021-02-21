@@ -1,3 +1,7 @@
 {
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "eslint.codeActionsOnSave.mode": "all",
+  "eslint.workingDirectories": [
+    "CampaignStatsTracker.Web/ClientApp"
+  ]
 }

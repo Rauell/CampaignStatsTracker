@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable no-undef */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { MemoryRouter } from 'react-router-dom';
@@ -8,6 +10,8 @@ it('renders without crashing', async () => {
   ReactDOM.render(
     <MemoryRouter>
       <App />
-    </MemoryRouter>, div);
-  await new Promise(resolve => setTimeout(resolve, 1000));
+    </MemoryRouter>,
+    div,
+  );
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 });

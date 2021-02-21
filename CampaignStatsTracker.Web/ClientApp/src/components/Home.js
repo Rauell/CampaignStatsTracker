@@ -1,3 +1,8 @@
+/* eslint-disable max-len */
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable react/static-property-placement */
+/* eslint-disable react/prefer-stateless-function */
+/* eslint-disable import/prefer-default-export */
 import React, { Component } from 'react';
 
 export class Home extends Component {
@@ -7,7 +12,13 @@ export class Home extends Component {
     return (
       <div>
         <h1>Stats Tracker</h1>
-        <p>Hi gang! This is a <em>very</em> early draft of a site that will track stats for us.</p>
+        <p>
+          Hi gang! This is a
+          {' '}
+          <em>very</em>
+          {' '}
+          early draft of a site that will track stats for us.
+        </p>
         <p>Try going to the campaigns in the nav menu above!</p>
         {/* <h1>Hello, world!</h1>
         <p>Welcome to your new single-page application, built with:</p>

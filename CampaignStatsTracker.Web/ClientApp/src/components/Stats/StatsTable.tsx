@@ -4,9 +4,9 @@ import { INamedPublicEntityStats } from '../../types';
 
 interface IProps {
   stats: INamedPublicEntityStats | INamedPublicEntityStats[];
-};
+}
 
-const toPercentString = (value: number) => `${(value * 100).toFixed(1)}%`
+const toPercentString = (value: number) => `${(value * 100).toFixed(1)}%`;
 const toRawValueString = (value: number) => value.toFixed(1);
 
 const StatsTable = (props: IProps) => {
@@ -30,7 +30,7 @@ const StatsTable = (props: IProps) => {
         </tr>
       </thead>
       <tbody>
-        {loopStats.map(s => (
+        {loopStats.map((s) => (
           <tr key={s.publicId}>
             <th scope="row">{s.name}</th>
             <td>

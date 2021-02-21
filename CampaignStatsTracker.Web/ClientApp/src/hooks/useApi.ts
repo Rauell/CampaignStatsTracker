@@ -20,14 +20,14 @@ const useApi = (props: IApiProps) => {
     setIsLoading(true);
 
     fetch(url, opts)
-      .then(response => {
+      .then((response) => {
         setIsLoading(false);
-        onResponse && onResponse(response);
+        if (onResponse) onResponse(response);
       })
-      .catch(error => {
+      .catch((fetchError) => {
         setIsLoading(false);
-        setError(error);
-      })
+        setError(fetchError);
+      });
   }, [url]);
 
   return { isLoading, error };
@@ -41,8 +41,8 @@ export const useApiJsonResponse = (props: IJsonProps) => {
   const { onSuccess, ...apiProps } = props;
   return useApi({
     onResponse: (response: Response) => response.json().then(onSuccess),
-    ...apiProps
+    ...apiProps,
   });
-}
+};
 
 export default useApi;

@@ -1,13 +1,23 @@
-import React from "react";
-import { Table, Badge, Card, CardHeader, CardBody } from "reactstrap";
-import { IRoll } from "../../types";
+import React from 'react';
+import {
+  Table, Badge, Card, CardHeader, CardBody,
+} from 'reactstrap';
+import { generatePath } from 'react-router';
+import { useHistory } from 'react-router-dom';
+import { IRoll } from '../../types';
+import Routes from '../../Routes';
 
-interface IProps {
+export type RollTableProps = {
   rolls: IRoll[];
 };
 
-const RollTable = (props: IProps) => {
+const RollTable = (props: RollTableProps) => {
   const { rolls } = props;
+  const history = useHistory();
+
+  const goToEditRoll = (publicId: string) => {
+    history.push(generatePath(Routes.rollEdit, { rollId: publicId }));
+  };
 
   return (
     <Card>
@@ -22,22 +32,23 @@ const RollTable = (props: IProps) => {
             </tr>
           </thead>
           <tbody>
-            {rolls.map(r => (
-              <tr key={r.publicId}>
+            {rolls.map((r) => (
+              <tr key={r.publicId} onClick={() => goToEditRoll(r.publicId)} style={{ cursor: 'pointer' }}>
                 <td>{r.dateCreated}</td>
                 <td>{r.rollType}</td>
                 <td>
                   <Badge>
                     {r.value + r.modifier}
                   </Badge>
-                  {r.modifier !== 0 &&
+                  {r.modifier !== 0
+                    && (
                     <small>
                       {' '}
                       <Badge>
                         {`(${r.value} + ${r.modifier})`}
                       </Badge>
                     </small>
-                  }
+                    )}
                 </td>
               </tr>
             ))}
