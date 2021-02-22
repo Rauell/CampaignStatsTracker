@@ -19,13 +19,13 @@ namespace CampaignStatsTracker.DTOs.Client
 
         public Object AsRepositoryAttackRoll()
         {
-            var die = new RepositoryDieRollTable.Row
+            var die = new RepositoryDieRoll
             {
                 NumberOfSides = 20,
                 Value = RollValue
             };
 
-            var modifier = new RepositoryRollModifierTable.Row
+            var modifier = new RepositoryRollModifier
             {
                 Value = Modifier
             };
@@ -48,13 +48,13 @@ namespace CampaignStatsTracker.DTOs.Client
 
         public Object AsRepositorySkillRoll()
         {
-            var die = new RepositoryDieRollTable.Row
+            var die = new RepositoryDieRoll
             {
                 NumberOfSides = 20,
                 Value = RollValue
             };
 
-            var modifier = new RepositoryRollModifierTable.Row
+            var modifier = new RepositoryRollModifier
             {
                 Value = Modifier
             };
@@ -77,13 +77,13 @@ namespace CampaignStatsTracker.DTOs.Client
 
         public Object AsRepositoryInitiatveRoll()
         {
-            var die = new RepositoryDieRollTable.Row
+            var die = new RepositoryDieRoll
             {
                 NumberOfSides = 20,
                 Value = RollValue
             };
 
-            var modifier = new RepositoryRollModifierTable.Row
+            var modifier = new RepositoryRollModifier
             {
                 Value = Modifier
             };
@@ -109,7 +109,7 @@ namespace CampaignStatsTracker.DTOs.Client
             {
                 Rows = RollValues.Select(
                     s => s.Values.Select(
-                        v => new RepositoryDieRollTable.Row
+                        v => new RepositoryDieRoll
                         {
                             NumberOfSides = s.DieType,
                             Value = v
@@ -118,7 +118,7 @@ namespace CampaignStatsTracker.DTOs.Client
                 ).SelectMany(s => s)
             };
 
-            var modifier = new RepositoryRollModifierTable.Row
+            var modifier = new RepositoryRollModifier
             {
                 Value = Modifier
             };

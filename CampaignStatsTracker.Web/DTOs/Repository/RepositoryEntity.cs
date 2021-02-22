@@ -1,22 +1,10 @@
 using System;
-using System.Collections.Generic;
-using Dapper;
+using CampaignStatsTracker.DTOs.Repository.Abstractions;
 
 namespace CampaignStatsTracker.DTOs.Repository
 {
-    public class RepositoryEntity
+    public sealed class RepositoryEntity : RepositoryRow<RepositoryEntity, RepositoryEntityTable>
     {
         public Guid PublicId { get; set; }
-
-        public RepositoryEntityTable ToTable()
-        {
-            return new RepositoryEntityTable
-            {
-                Rows = new List<RepositoryEntity> { this }
-            };
-        }
-
-        public SqlMapper.ICustomQueryParameter AsTableValuedParameter() =>
-            ToTable().AsTableValuedParameter();
     }
 }

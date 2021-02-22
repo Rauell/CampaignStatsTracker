@@ -1,23 +1,15 @@
-using System;
-using System.Collections.Generic;
-using Dapper;
-using CampaignStatsTracker.Web.Extensions;
+using CampaignStatsTracker.DTOs.Repository.Abstractions;
 
 namespace CampaignStatsTracker.DTOs.Repository
 {
-    public class RepositoryEntityTable
+    public sealed class RepositoryEntityTable : RepositoryTable<RepositoryEntity>
     {
-        public IEnumerable<RepositoryEntity> Rows { get; set; }
-
-        private static readonly string _typeName = "[Entities].[EntitiesType]";
-        private static readonly IEnumerable<string> _columnNames = new string[]
+        private static readonly RepositoryTableMetaData _metaData = new RepositoryTableMetaData
         {
-            "PublicId"
+            TypeName = "[Entities].[EntitiesType]",
+            ColumnNames = new string[] { "PublicId" }
         };
 
-        public SqlMapper.ICustomQueryParameter AsTableValuedParameter()
-        {
-            return Rows.AsTableValuedParameter(_typeName, _columnNames);
-        }
+        public RepositoryEntityTable() : base(_metaData) { }
     }
 }

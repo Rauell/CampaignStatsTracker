@@ -1,38 +1,15 @@
-using System.Collections.Generic;
-using Dapper;
-using CampaignStatsTracker.Web.Extensions;
+using CampaignStatsTracker.DTOs.Repository.Abstractions;
 
 namespace CampaignStatsTracker.DTOs.Repository
 {
-    public class RepositoryRollModifierTable
+    public sealed class RepositoryRollModifierTable : RepositoryTable<RepositoryRollModifier>
     {
-        public class Row
+        private static readonly RepositoryTableMetaData _metaData = new RepositoryTableMetaData
         {
-            public int Value { get; set; }
-
-            public RepositoryRollModifierTable ToTable()
-            {
-                return new RepositoryRollModifierTable
-                {
-                    Rows = new List<RepositoryRollModifierTable.Row> { this }
-                };
-            }
-
-            public SqlMapper.ICustomQueryParameter AsTableValuedParameter() =>
-                ToTable().AsTableValuedParameter();
-        }
-
-        public IEnumerable<RepositoryRollModifierTable.Row> Rows { get; set; }
-
-        private static readonly string _typeName = "[Rolls].[RollModifierType]";
-        private static readonly IEnumerable<string> _columnNames = new string[]
-        {
-            "Value"
+            TypeName = "[Rolls].[RollModifierType]",
+            ColumnNames = new string[] { "Value" }
         };
 
-        public SqlMapper.ICustomQueryParameter AsTableValuedParameter()
-        {
-            return Rows.AsTableValuedParameter(_typeName, _columnNames);
-        }
+        public RepositoryRollModifierTable() : base(_metaData) { }
     }
 }
