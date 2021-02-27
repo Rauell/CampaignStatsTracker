@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CampaignStatsTracker.DTOs.Repository;
+using CampaignStatsTracker.Web.Features.Rolls.Repositories.Dtos;
 using CampaignStatsTracker.Web.Extensions;
 
 namespace CampaignStatsTracker.DTOs.Client

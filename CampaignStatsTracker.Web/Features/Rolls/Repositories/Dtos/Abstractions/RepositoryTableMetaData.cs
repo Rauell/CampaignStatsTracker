@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace CampaignStatsTracker.DTOs.Repository.Abstractions
+namespace CampaignStatsTracker.Web.Features.Rolls.Repositories.Dtos.Abstractions
 {
-    public class RepositoryTableMetaData
+    internal class RepositoryTableMetaData
     {
         public string TypeName { get; set; }
         public IEnumerable<string> ColumnNames { get; set; }

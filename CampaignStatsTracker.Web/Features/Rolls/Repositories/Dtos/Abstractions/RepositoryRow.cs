@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Dapper;
 
-namespace CampaignStatsTracker.DTOs.Repository.Abstractions
+namespace CampaignStatsTracker.Web.Features.Rolls.Repositories.Dtos.Abstractions
 {
-    public abstract class RepositoryRow<Row, Table>
+    internal abstract class RepositoryRow<Row, Table>
         where Row : class
         where Table : RepositoryTable<Row>, new()
     {

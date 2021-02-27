@@ -1,8 +1,8 @@
-using CampaignStatsTracker.DTOs.Repository.Abstractions;
+using CampaignStatsTracker.Web.Features.Rolls.Repositories.Dtos.Abstractions;
 
-namespace CampaignStatsTracker.DTOs.Repository
+namespace CampaignStatsTracker.Web.Features.Rolls.Repositories.Dtos
 {
-    public sealed class RepositoryRollCommentTable : RepositoryTable<RepositoryRollComment>
+    internal sealed class RepositoryRollCommentTable : RepositoryTable<RepositoryRollComment>
     {
         private static readonly RepositoryTableMetaData _metaData = new RepositoryTableMetaData
         {
