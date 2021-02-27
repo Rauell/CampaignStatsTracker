@@ -1,6 +1,4 @@
-using CampaignStatsTracker.Web.Features.Rolls.Repositories.Dtos.Abstractions;
-
-namespace CampaignStatsTracker.Web.Features.Rolls.Repositories.Dtos
+namespace CampaignStatsTracker.Web.Features.Rolls.Repositories.Dtos.Abstractions
 {
     internal sealed class RepositoryRollComment : RepositoryRow<RepositoryRollComment, RepositoryRollCommentTable>
     {

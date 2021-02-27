@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using CampaignStatsTracker.Web.Data.Connections;
 using CampaignStatsTracker.Web.Configurations;
 using CampaignStatsTracker.Web.Features.Rolls.Repositories;
+using CampaignStatsTracker.Web.Data.Mappings;
 
 namespace CampaignStatsTracker.Web
 {
@@ -70,6 +71,8 @@ namespace CampaignStatsTracker.Web
                 .AddSingleton<IInitiativeRollRepository, InitiativeRollRepository>()
                 .AddSingleton<ISkillRollRepository, SkillRollRepository>()
             ;
+
+            services.AddAutoMapper(typeof(RepositoryDtoMappingProfile));
 
             services.AddLogging(opt =>
             {

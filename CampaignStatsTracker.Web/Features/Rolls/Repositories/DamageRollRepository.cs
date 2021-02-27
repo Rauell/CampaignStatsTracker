@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using CampaignStatsTracker.DTOs.Client;
+using CampaignStatsTracker.Web.Features.Rolls.Repositories.Dtos;
 
 namespace CampaignStatsTracker.Web.Features.Rolls.Repositories
 {
@@ -13,6 +14,6 @@ namespace CampaignStatsTracker.Web.Features.Rolls.Repositories
         }
 
         public async Task InsertRollAsync(ClientRollDTO roll) =>
-            await _utility.InsertRollAsync("[Rolls].[Sto_InsertDamageRoll]", roll.AsRepositoryDamageRoll());
+            await _utility.InsertRollAsync<DamageRollRepositoryDto>("[Rolls].[Sto_InsertDamageRoll]", roll);
     }
 }
