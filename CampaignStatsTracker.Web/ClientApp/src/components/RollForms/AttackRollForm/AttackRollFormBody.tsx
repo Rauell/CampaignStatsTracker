@@ -1,22 +1,19 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Col, Row } from 'reactstrap';
 import {
   ModifierInput,
-  ModifierInputProps,
   SkillTypeInput,
-  SkillTypeInputProps,
   AttackRollSuccessInput,
-  AttackRollSuccessInputProps,
   RollValueInput,
-  RollValueInputProps,
 } from '../Inputs';
 
-export type AttackRollFormBodyProps =
-  ModifierInputProps
-  & SkillTypeInputProps
-  & AttackRollSuccessInputProps
-  & RollValueInputProps;
-const AttackRollFormBody = (props: AttackRollFormBodyProps) => (
+type Props =
+  ComponentProps<typeof ModifierInput> &
+  ComponentProps<typeof SkillTypeInput> &
+  ComponentProps<typeof AttackRollSuccessInput> &
+  ComponentProps<typeof RollValueInput>;
+
+const AttackRollFormBody = (props: Props) => (
   <Row>
     <Col md={5}>
       <Row>

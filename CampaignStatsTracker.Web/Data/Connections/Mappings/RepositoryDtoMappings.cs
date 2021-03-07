@@ -59,14 +59,17 @@ namespace CampaignStatsTracker.Web.Data.Mappings
             CreateMapSingleDie<AttackRollRepositoryDto>(20)
                 .ForMember(dest => dest.Hit, opts => opts.MapFrom(src => src.RollSuccess));
 
-            CreateMapSingleDie<SkillRollRepositoryDto>(20)
-                .ForMember(dest => dest.Success, opts => opts.MapFrom(src => src.RollSuccess));
+            CreateMapBase<DamageRollRepositoryDto>()
+                .ForMember(dest => dest.Dice, opts => opts.MapFrom(src => MultiDiceFromClientDto(src).AsTableValuedParameter()));
 
             CreateMapSingleDie<InitiativeRollRepositoryDto>(20)
                 .ForMember(dest => dest.Rank, opts => opts.MapFrom(src => src.Rank));
 
-            CreateMapBase<DamageRollRepositoryDto>()
-                .ForMember(dest => dest.Dice, opts => opts.MapFrom(src => MultiDiceFromClientDto(src).AsTableValuedParameter()));
+            CreateMapSingleDie<SavingThrowRepositoryDto>(20)
+                .ForMember(dest => dest.Success, opts => opts.MapFrom(src => src.RollSuccess));
+
+            CreateMapSingleDie<SkillRollRepositoryDto>(20)
+                .ForMember(dest => dest.Success, opts => opts.MapFrom(src => src.RollSuccess));
         }
     }
 }

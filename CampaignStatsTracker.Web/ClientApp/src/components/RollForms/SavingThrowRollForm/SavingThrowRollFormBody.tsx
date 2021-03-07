@@ -1,24 +1,25 @@
 import React, { ComponentProps } from 'react';
 import { Col, Row } from 'reactstrap';
+import { Guid } from 'guid-typescript';
 import {
   ModifierInput,
-  SkillTypeInput,
+  AttributeTypeInput,
   RollSuccessInput,
   RollValueInput,
 } from '../Inputs';
 
-export type SkillRollFormBodyProps =
+export type SavingThrowRollFormBodyProps =
   ComponentProps<typeof ModifierInput> &
-  ComponentProps<typeof SkillTypeInput> &
+  ComponentProps<typeof RollValueInput> &
   ComponentProps<typeof RollSuccessInput> &
-  ComponentProps<typeof RollValueInput>;
+  ComponentProps<typeof AttributeTypeInput>;
 
-const AttackRollFormBody = (props: SkillRollFormBodyProps) => (
+const SavingThrowRollFormBody = (props: SavingThrowRollFormBodyProps) => (
   <Row>
     <Col md={5}>
       <Row>
         <Col xs={12}>
-          <SkillTypeInput {...props} />
+          <AttributeTypeInput {...props} />
         </Col>
         <Col xs={12}>
           <RollSuccessInput {...props} />
@@ -36,6 +37,6 @@ const AttackRollFormBody = (props: SkillRollFormBodyProps) => (
       </Row>
     </Col>
   </Row>
-);
+)
 
-export default AttackRollFormBody;
+export default SavingThrowRollFormBody;

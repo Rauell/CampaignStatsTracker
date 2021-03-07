@@ -1,12 +1,9 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Col, Row, Alert } from 'reactstrap';
 import { Guid } from 'guid-typescript';
-import {
-  RankInput,
-  RankInputProps,
-} from '../Inputs';
+import { RankInput } from '../Inputs';
 
-export type InitiatveRollFormBodyProps = RankInputProps & {
+export type InitiatveRollFormBodyProps = ComponentProps<typeof RankInput> & {
   characterId: Guid;
 };
 
@@ -18,9 +15,9 @@ const InitiatveRollFormBody = (props: InitiatveRollFormBodyProps) => {
         <RankInput {...props} />
         {characterId.equals(Guid.createEmpty())
           && (
-          <Alert color="danger">
-            A character must be selected!
-          </Alert>
+            <Alert color="danger">
+              A character must be selected!
+            </Alert>
           )}
       </Col>
     </Row>

@@ -6,6 +6,7 @@ namespace CampaignStatsTracker.DTOs.Client
     public class ClientRollDTO
     {
         public IEnumerable<Guid> AssociatedEntities { get; set; }
+        public string AttributeType { get; set; }
         public string DamageType { get; set; }
         public int Modifier { get; set; }
         public int Rank { get; set; }

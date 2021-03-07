@@ -1,21 +1,19 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Col, Row, Badge } from 'reactstrap';
 import {
   DamageTypeInput,
-  DamageTypeInputProps,
   ModifierInput,
-  ModifierInputProps,
   MultiDieValueInput,
-  MultiDieValueInputProps,
-  RollValueInputProps,
+  RollValueInput,
 } from '../Inputs';
 
-export type DamageRollFormBodyProps =
-  DamageTypeInputProps
-  & ModifierInputProps
-  & MultiDieValueInputProps
-  & RollValueInputProps;
-const DamageRollFormBody = (props: DamageRollFormBodyProps) => {
+type Props =
+  ComponentProps<typeof DamageTypeInput> &
+  ComponentProps<typeof ModifierInput> &
+  ComponentProps<typeof MultiDieValueInput> &
+  ComponentProps<typeof RollValueInput>;
+
+const DamageRollFormBody = (props: Props) => {
   const { modifier, multiDieRollValues } = props;
   const allValues = multiDieRollValues.map((l) => l.values).flat();
   const totalDamage = modifier + allValues.reduce((l, r) => l + r, 0);

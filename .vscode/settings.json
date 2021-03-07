@@ -3,5 +3,6 @@
   "eslint.codeActionsOnSave.mode": "all",
   "eslint.workingDirectories": [
     "CampaignStatsTracker.Web/ClientApp"
-  ]
+  ],
+  "files.eol": "\n"
 }

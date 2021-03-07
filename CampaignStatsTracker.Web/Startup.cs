@@ -69,6 +69,7 @@ namespace CampaignStatsTracker.Web
                 .AddSingleton<IAttackRollRepository, AttackRollRepository>()
                 .AddSingleton<IDamageRollRepository, DamageRollRepository>()
                 .AddSingleton<IInitiativeRollRepository, InitiativeRollRepository>()
+                .AddSingleton<ISavingThrowRepository, SavingThrowRepository>()
                 .AddSingleton<ISkillRollRepository, SkillRollRepository>()
             ;
 

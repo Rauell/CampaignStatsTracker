@@ -1,12 +1,12 @@
 import React from 'react';
 import { Input, FormGroup, Label } from 'reactstrap';
 
-export type ModifierInputProps = {
+type Props = {
   modifier: number;
   onModifierInputChange: (value: number) => void;
 };
 
-const ModifierInput = (props: ModifierInputProps) => {
+const ModifierInput = (props: Props) => {
   const { onModifierInputChange, modifier, ...remainingProps } = props;
 
   return (

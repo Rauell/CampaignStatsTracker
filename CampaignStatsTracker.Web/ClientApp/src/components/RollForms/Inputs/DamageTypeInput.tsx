@@ -1,6 +1,7 @@
 import React from 'react';
-import { FormGroup, Label, Input } from 'reactstrap';
+import { FormGroup, Label } from 'reactstrap';
 import InputPropsBase from './InputPropsBase';
+import { SelectInput } from '../../FormInputs';
 
 const damageTypes = [
   {
@@ -41,12 +42,12 @@ const damageTypeOptions = damageTypes.map((g) => (
   </optgroup>
 ));
 
-export type DamageTypeInputProps = InputPropsBase & {
+type Props = InputPropsBase & {
   damageType: string;
   onDamageTypeInputChange: (damageType: string) => void;
 };
 
-const DamageTypeInput = (props: DamageTypeInputProps) => {
+const DamageTypeInput = (props: Props) => {
   const {
     damageType,
     onDamageTypeInputChange,
@@ -56,15 +57,14 @@ const DamageTypeInput = (props: DamageTypeInputProps) => {
   return (
     <FormGroup>
       <Label>Damage Type</Label>
-      <Input
-        type="select"
+      <SelectInput
         value={allDamageTypes.some((d) => d === damageType) ? damageType : ''}
-        onChange={(e) => onDamageTypeInputChange(e.target.value)}
+        onChange={onDamageTypeInputChange}
         {...remainingProps}
       >
         <option value="">--</option>
         {damageTypeOptions}
-      </Input>
+      </SelectInput>
     </FormGroup>
   );
 };

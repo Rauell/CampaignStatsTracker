@@ -2,12 +2,12 @@ import React from 'react';
 import { Input, FormGroup, Label } from 'reactstrap';
 import InputPropsBase from './InputPropsBase';
 
-export type RollValueInputProps = InputPropsBase & {
+type Props = InputPropsBase & {
   rollValue: number | string;
   onRollValueInputChange: (value: number | string) => void;
 };
 
-const RollValueInput = (props: RollValueInputProps) => {
+const RollValueInput = (props: Props) => {
   const { rollValue, onRollValueInputChange, ...remainingProps } = props;
 
   return (

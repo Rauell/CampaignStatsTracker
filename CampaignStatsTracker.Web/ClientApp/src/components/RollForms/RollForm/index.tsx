@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, ComponentProps } from 'react';
 import {
   Card,
   CardHeader,
@@ -14,27 +14,29 @@ import {
   Button,
 } from 'reactstrap';
 import { Guid } from 'guid-typescript';
-import { AttackRollFormBody, AttackRollFormBodyProps } from '../AttackRollForm';
-import { DamageRollFormBody, DamageRollFormBodyProps } from '../DamageRollForm';
-import { InitiatveRollFormBody, InitiatveRollFormBodyProps } from '../InitiativeRollForm';
-import { SkillRollFormBody, SkillRollFormBodyProps } from '../SkillRollForm';
+import { AttackRollFormBody } from '../AttackRollForm';
+import { DamageRollFormBody } from '../DamageRollForm';
+import { InitiatveRollFormBody } from '../InitiativeRollForm';
+import { SavingThrowRollFormBody } from '../SavingThrowRollForm';
+import { SkillRollFormBody } from '../SkillRollForm';
 import {
   RollSuccessOptions,
   rollSuccessOptionAsBool,
   CharacterSelectInput,
-  CharacterSelectInputProps,
 } from '../Inputs';
 import { tryParseInt } from '../../../utilities';
 
 type RollFormBodyProps =
-  CharacterSelectInputProps &
-  AttackRollFormBodyProps &
-  DamageRollFormBodyProps &
-  InitiatveRollFormBodyProps &
-  SkillRollFormBodyProps;
+  ComponentProps<typeof CharacterSelectInput> &
+  ComponentProps<typeof AttackRollFormBody> &
+  ComponentProps<typeof DamageRollFormBody> &
+  ComponentProps<typeof InitiatveRollFormBody> &
+  ComponentProps<typeof SavingThrowRollFormBody> &
+  ComponentProps<typeof SkillRollFormBody>;
 
 type RollFormNonDataProps =
   'characters' |
+  'onAttributeTypeInputChange' |
   'onCharacterSelectInputChange' |
   'onDamageTypeInputChange' |
   'onModifierInputChange' |
@@ -46,21 +48,22 @@ type RollFormNonDataProps =
 
 type RollFormDataProps = Omit<RollFormBodyProps, RollFormNonDataProps>;
 
-export type RollFormProps = Partial<Pick<CharacterSelectInputProps, 'characters'>> & {
+export type RollFormProps = Partial<Pick<ComponentProps<typeof CharacterSelectInput>, 'characters'>> & {
   associatedEntities?: Guid[]
   onSubmitSuccess?: () => Promise<void>
 };
 
 const defaultRollFormData: RollFormDataProps = {
+  attributeType: 'Strength',
+  characterId: Guid.createEmpty(),
   damageType: '',
   disabled: false,
   modifier: 0,
+  multiDieRollValues: [],
+  rank: 1,
   rollSuccess: RollSuccessOptions.None,
   rollValue: '',
   skillType: '',
-  rank: 1,
-  multiDieRollValues: [],
-  characterId: Guid.createEmpty(),
 };
 
 type RollFormType = {
@@ -90,6 +93,11 @@ const rollTypes: RollFormType[] = [
     apiUrl: '/api/roll/initiative',
     component: InitiatveRollFormBody,
   },
+  {
+    name: 'Saving Throw',
+    apiUrl: '/api/roll/saving',
+    component: SavingThrowRollFormBody,
+  },
 ];
 
 const submitAddRoll = async (
@@ -98,6 +106,7 @@ const submitAddRoll = async (
   associatedEntities: Guid[],
 ) => {
   const {
+    attributeType,
     characterId,
     damageType,
     modifier,
@@ -112,6 +121,7 @@ const submitAddRoll = async (
     method: 'POST',
     headers: new Headers({ 'content-type': 'application/json' }),
     body: JSON.stringify({
+      attributeType,
       damageType,
       modifier,
       rank: tryParseInt(rank),
@@ -162,6 +172,7 @@ const RollForm = (props: RollFormProps) => {
     ...formData,
     characters,
     disabled: isSubmitting,
+    onAttributeTypeInputChange: (attributeType) => setFormData({ ...formData, attributeType }),
     onDamageTypeInputChange: (damageType) => setFormData({ ...formData, damageType }),
     onCharacterSelectInputChange: (characterId) => setFormData({ ...formData, characterId }),
     onModifierInputChange: (modifier) => setFormData({ ...formData, modifier }),

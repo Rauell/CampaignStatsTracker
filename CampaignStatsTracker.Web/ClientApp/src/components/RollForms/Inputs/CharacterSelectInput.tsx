@@ -1,20 +1,21 @@
 import React from 'react';
-import { FormGroup, Label, Input } from 'reactstrap';
+import { FormGroup, Label } from 'reactstrap';
 import { Guid } from 'guid-typescript';
 import InputPropsBase from './InputPropsBase';
+import { SelectInput } from '../../FormInputs';
 
 type Character = {
   id: Guid;
   name: string;
 };
 
-export type CharacterSelectInputProps = InputPropsBase & {
+type Props = InputPropsBase & {
   characterId: Guid;
   characters: Character[];
   onCharacterSelectInputChange: (id: Guid) => void;
 };
 
-const CharacterSelectInput = (props: CharacterSelectInputProps) => {
+const CharacterSelectInput = (props: Props) => {
   const {
     characterId,
     characters,
@@ -25,11 +26,11 @@ const CharacterSelectInput = (props: CharacterSelectInputProps) => {
   return (
     <FormGroup>
       <Label for="characterSelect">Select Character</Label>
-      <Input
+      <SelectInput
         id="characterSelect"
         type="select"
         value={characterId.toString()}
-        onChange={(e) => onCharacterSelectInputChange(Guid.parse(e.target.value))}
+        onChange={(newValue) => onCharacterSelectInputChange(Guid.parse(newValue))}
         {...remainingProps}
       >
         <option value={Guid.EMPTY}>--</option>
@@ -38,7 +39,7 @@ const CharacterSelectInput = (props: CharacterSelectInputProps) => {
             {c.name}
           </option>
         ))}
-      </Input>
+      </SelectInput>
     </FormGroup>
   );
 };

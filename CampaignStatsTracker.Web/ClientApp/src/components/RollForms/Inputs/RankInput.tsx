@@ -2,12 +2,12 @@ import React from 'react';
 import { Input, FormGroup, Label } from 'reactstrap';
 import InputPropsBase from './InputPropsBase';
 
-export type RankInputProps = InputPropsBase & {
+type Props = InputPropsBase & {
   rank: number | string;
   onRankInputChange: (value: number | string) => void;
 };
 
-const RankInput = (props: RankInputProps) => {
+const RankInput = (props: Props) => {
   const { rank, onRankInputChange, ...remainingProps } = props;
 
   return (

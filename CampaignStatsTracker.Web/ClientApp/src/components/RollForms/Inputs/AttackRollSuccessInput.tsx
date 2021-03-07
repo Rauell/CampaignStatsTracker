@@ -1,11 +1,11 @@
-import React from 'react';
-import RollSuccessInputBase, { RollSuccessInputBaseProps } from './RollSuccessInputBase';
+import React, { ComponentProps } from 'react';
+import RollSuccessInputBase from './RollSuccessInputBase';
 
 export { RollSuccessOptions } from './RollSuccessInputBase';
 
-export type AttackRollSuccessInputProps = Omit<RollSuccessInputBaseProps, 'rollSuccessText' | 'rollFailureText'>;
+type Props = Omit<ComponentProps<typeof RollSuccessInputBase>, 'rollSuccessText' | 'rollFailureText'>;
 
-const AttackRollSuccessInput = (props: AttackRollSuccessInputProps) => (
+const AttackRollSuccessInput = (props: Props) => (
   <RollSuccessInputBase
     rollSuccessText="Hit"
     rollFailureText="Miss"

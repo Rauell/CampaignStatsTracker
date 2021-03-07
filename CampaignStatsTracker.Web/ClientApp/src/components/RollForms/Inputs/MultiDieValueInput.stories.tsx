@@ -20,7 +20,10 @@ OneTypeSelected.args = {
   multiDieRollValues: [
     {
       dieType: DieType.D6,
-      values: '1, 4, 6',
+      values: [1, 4, 6],
+      valueText: '11',
+      errorText: '',
+      isValid: true,
     },
   ],
 };

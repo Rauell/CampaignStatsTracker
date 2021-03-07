@@ -20,14 +20,14 @@ export const rollSuccessOptionAsBool = (option: RollSuccessOptions) => {
   }
 };
 
-export type RollSuccessInputBaseProps = InputPropsBase & {
+type Props = InputPropsBase & {
   rollSuccess: RollSuccessOptions;
   rollSuccessText: string;
   rollFailureText: string;
   onRollSuccessInputChange: (success: RollSuccessOptions) => void;
 };
 
-const RollSuccessInputBase = (props: RollSuccessInputBaseProps) => {
+const RollSuccessInputBase = (props: Props) => {
   const {
     rollSuccess,
     rollSuccessText,

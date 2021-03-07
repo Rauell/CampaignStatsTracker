@@ -31,12 +31,12 @@ export const defaultDieLine: DieLine = {
   isValid: false,
 };
 
-export type MultiDieValueInputProps = InputPropsBase & {
+type Props = InputPropsBase & {
   multiDieRollValues: DieLine[];
   onMultiDieRollValuesChange: (lines: DieLine[]) => void;
 };
 
-const MultiDieValueInput = (props: MultiDieValueInputProps) => {
+const MultiDieValueInput = (props: Props) => {
   const { multiDieRollValues, onMultiDieRollValuesChange, ...remainingProps } = props;
 
   const addLine = (dieType: DieType) => {

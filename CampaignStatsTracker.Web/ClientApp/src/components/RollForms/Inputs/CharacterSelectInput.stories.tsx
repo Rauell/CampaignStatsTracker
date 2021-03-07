@@ -32,7 +32,7 @@ NoCharacterSelected.args = {};
 
 export const CharacterSelected = Template.bind({});
 CharacterSelected.args = {
-  characterId: metaData.args.characters[0].id,
+  characterId: metaData.args?.characters[0].id,
 };
 
 export const InvalidCharacterSelected = Template.bind({});

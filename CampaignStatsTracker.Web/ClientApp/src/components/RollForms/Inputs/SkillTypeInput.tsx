@@ -23,12 +23,12 @@ const defaultSkills = [
   'Survival',
 ];
 
-export type SkillTypeInputProps = InputPropsBase & {
+type Props = InputPropsBase & {
   skillType: string;
   onSkillTypeInputChange: (rollType: string) => void;
 };
 
-const SkillTypeInput = (props: SkillTypeInputProps) => {
+const SkillTypeInput = (props: Props) => {
   const {
     skillType,
     onSkillTypeInputChange,
