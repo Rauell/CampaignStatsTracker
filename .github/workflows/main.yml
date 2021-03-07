@@ -2,7 +2,7 @@
 
 name: CI
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the initial-scratch-work branch
   push:
@@ -29,11 +29,23 @@ jobs:
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: 3.1.x
-          
+
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.1.5
         with:
           node-version: 12.x
-          
+
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: CampaignStatsTracker.Web/ClientApp/node_modules
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('CampaignStatsTracker.Web/ClientApp/node_modules/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - run: dotnet publish CampaignStatsTracker.Web
-      
+
