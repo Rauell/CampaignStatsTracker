@@ -2,32 +2,30 @@ import React, { ComponentProps } from 'react';
 import { Col, Row } from 'reactstrap';
 import MultiDieRollTotal from '../MultiDieRollTotal';
 import {
-  DamageTypeInput,
   ModifierInput,
   MultiDieValueInput,
   RollValueInput,
+  RollSuccessInput,
 } from '../Inputs';
 
 type Props =
-  ComponentProps<typeof DamageTypeInput> &
   ComponentProps<typeof ModifierInput> &
   ComponentProps<typeof MultiDieValueInput> &
-  ComponentProps<typeof RollValueInput>;
+  ComponentProps<typeof RollValueInput> &
+  ComponentProps<typeof RollSuccessInput>;
 
-const DamageRollFormBody = (props: Props) => (
+const MiscRollFormBody = (props: Props) => (
   <Row>
     <Col>
-      <Row>
-        <Col xs={12}>
-          <DamageTypeInput {...props} />
-        </Col>
-      </Row>
 
       <Row className="align-items-center">
-        <Col md={12}>
+        <Col md={7}>
           <h4>
             <MultiDieRollTotal {...props} />
           </h4>
+        </Col>
+        <Col md={5}>
+          <RollSuccessInput {...props} />
         </Col>
       </Row>
 
@@ -47,4 +45,4 @@ const DamageRollFormBody = (props: Props) => (
   </Row>
 );
 
-export default DamageRollFormBody;
+export default MiscRollFormBody;

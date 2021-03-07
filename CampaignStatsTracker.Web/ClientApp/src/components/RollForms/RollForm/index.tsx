@@ -1,4 +1,4 @@
-import React, { useState, ComponentProps } from 'react';
+import React, { useState, ComponentProps, Component } from 'react';
 import {
   Card,
   CardHeader,
@@ -17,6 +17,7 @@ import { Guid } from 'guid-typescript';
 import { AttackRollFormBody } from '../AttackRollForm';
 import { DamageRollFormBody } from '../DamageRollForm';
 import { InitiatveRollFormBody } from '../InitiativeRollForm';
+import { MiscRollFormBody } from '../MiscRollForm';
 import { SavingThrowRollFormBody } from '../SavingThrowRollForm';
 import { SkillRollFormBody } from '../SkillRollForm';
 import {
@@ -30,6 +31,7 @@ type RollFormBodyProps =
   ComponentProps<typeof CharacterSelectInput> &
   ComponentProps<typeof AttackRollFormBody> &
   ComponentProps<typeof DamageRollFormBody> &
+  ComponentProps<typeof MiscRollFormBody> &
   ComponentProps<typeof InitiatveRollFormBody> &
   ComponentProps<typeof SavingThrowRollFormBody> &
   ComponentProps<typeof SkillRollFormBody>;
@@ -97,6 +99,11 @@ const rollTypes: RollFormType[] = [
     name: 'Saving Throw',
     apiUrl: '/api/roll/saving',
     component: SavingThrowRollFormBody,
+  },
+  {
+    name: 'Miscellaneous',
+    apiUrl: '/api/roll/misc',
+    component: MiscRollFormBody,
   },
 ];
 
