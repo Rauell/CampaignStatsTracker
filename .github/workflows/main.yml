@@ -41,7 +41,7 @@ jobs:
           cache-name: cache-node-modules
         with:
           path: CampaignStatsTracker.Web/ClientApp/node_modules
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('CampaignStatsTracker.Web/ClientApp/node_modules/yarn.lock') }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('CampaignStatsTracker.Web/ClientApp/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
