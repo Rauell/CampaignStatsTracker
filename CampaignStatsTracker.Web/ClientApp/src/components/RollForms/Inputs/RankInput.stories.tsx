@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Story, Meta } from '@storybook/react';
-import RankInput, { RankInputProps } from './RankInput';
+import RankInput from './RankInput';
 
 const metaData: Meta = {
   title: 'RollForms/Inputs/RankInput',
@@ -8,6 +8,6 @@ const metaData: Meta = {
 };
 export default metaData;
 
-const Template: Story<RankInputProps> = (args) => <RankInput {...args} />;
+const Template: Story<ComponentProps<typeof RankInput>> = (args) => <RankInput {...args} />;
 
 export const Default = Template.bind({});

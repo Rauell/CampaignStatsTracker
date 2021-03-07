@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Story, Meta } from '@storybook/react';
 import { Guid } from 'guid-typescript';
-import CharacterSelectInput, { CharacterSelectInputProps } from './CharacterSelectInput';
+import CharacterSelectInput from './CharacterSelectInput';
 
 const metaData: Meta = {
   title: 'RollForms/Inputs/CharacterSelectInput',
@@ -25,7 +25,9 @@ const metaData: Meta = {
   },
 };
 
-const Template: Story<CharacterSelectInputProps> = (args) => <CharacterSelectInput {...args} />;
+const Template: Story<ComponentProps<typeof CharacterSelectInput>> = (args) => (
+  <CharacterSelectInput {...args} />
+);
 
 export const NoCharacterSelected = Template.bind({});
 NoCharacterSelected.args = {};

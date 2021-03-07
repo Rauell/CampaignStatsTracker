@@ -1,13 +1,14 @@
 import React from 'react';
 import { Story, Meta } from '@storybook/react';
 import RollForm, { RollFormProps } from '.';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import CharacterSelectInputMeta from '../Inputs/CharacterSelectInput.stories';
 
 const metaData: Meta = {
   title: 'RollForms/RollForm',
   component: RollForm,
   args: {
-    characters: CharacterSelectInputMeta.args.characters,
+    characters: CharacterSelectInputMeta.args?.characters,
   },
 };
 export default metaData;
