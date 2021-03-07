@@ -1,4 +1,4 @@
-import React, { useState, ComponentProps, Component } from 'react';
+import React, { useState, ComponentProps } from 'react';
 import {
   Card,
   CardHeader,

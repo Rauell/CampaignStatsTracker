@@ -1,6 +1,5 @@
 import React, { ComponentProps } from 'react';
 import { Col, Row } from 'reactstrap';
-import { Guid } from 'guid-typescript';
 import {
   ModifierInput,
   AttributeTypeInput,
@@ -37,6 +36,6 @@ const SavingThrowRollFormBody = (props: SavingThrowRollFormBodyProps) => (
       </Row>
     </Col>
   </Row>
-)
+);
 
 export default SavingThrowRollFormBody;
