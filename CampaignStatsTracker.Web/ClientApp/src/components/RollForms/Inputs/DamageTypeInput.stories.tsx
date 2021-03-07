@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Story, Meta } from '@storybook/react';
 
-import DamageTypeInput, { DamageTypeInputProps } from './DamageTypeInput';
+import DamageTypeInput from './DamageTypeInput';
 
 export default {
   title: 'RollForms/Inputs/DamageTypeInput',
   component: DamageTypeInput,
 } as Meta;
 
-const Template: Story<DamageTypeInputProps> = (args) => <DamageTypeInput {...args} />;
+const Template: Story<ComponentProps<typeof DamageTypeInput>> = (args) => (
+  <DamageTypeInput {...args} />
+);
 
 export const NoTypeSelected = Template.bind({});
 NoTypeSelected.args = {};

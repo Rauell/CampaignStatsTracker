@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import { Story, Meta } from '@storybook/react';
 
-import AttackRollSuccessInput, { AttackRollSuccessInputProps, RollSuccessOptions } from './AttackRollSuccessInput';
+import AttackRollSuccessInput, { RollSuccessOptions } from './AttackRollSuccessInput';
 
 export default {
   title: 'RollForms/Inputs/AttackRollSuccessInput',
@@ -11,7 +11,9 @@ export default {
   },
 } as Meta;
 
-const Template: Story<AttackRollSuccessInputProps> = (args) => <AttackRollSuccessInput {...args} />;
+const Template: Story<ComponentProps<typeof AttackRollSuccessInput>> = (args) => (
+  <AttackRollSuccessInput {...args} />
+);
 
 export const Default = Template.bind({});
 

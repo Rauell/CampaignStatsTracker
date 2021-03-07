@@ -7,7 +7,7 @@ const metaData: Meta = {
   title: 'RollForms/RollForm',
   component: RollForm,
   args: {
-    characters: CharacterSelectInputMeta.args.characters,
+    characters: CharacterSelectInputMeta.args?.characters,
   },
 };
 export default metaData;
