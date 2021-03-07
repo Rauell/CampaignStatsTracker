@@ -28,6 +28,8 @@ const useApi = (props: IApiProps) => {
         setIsLoading(false);
         setError(fetchError);
       });
+    // ignoring this as we're going to deprecate the useApi hook anyway
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 
   return { isLoading, error };
